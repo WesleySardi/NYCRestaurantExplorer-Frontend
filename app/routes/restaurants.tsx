@@ -1,6 +1,16 @@
-import { useLoaderData, useSearchParams } from "@remix-run/react";
+import { Outlet, useLoaderData, useSearchParams } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { useEffect, useState } from "react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableHead,
+} from "../components/ui/table";
+import { Button } from "../components/ui/button";
+import { useNavigate } from "@remix-run/react";
 
 export async function loader({ request }) {
   const url = new URL(request.url);
@@ -24,7 +34,8 @@ export async function loader({ request }) {
 export default function Restaurants() {
   const { content, totalPages, pageable } = useLoaderData();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const page = searchParams.get("page");
@@ -34,45 +45,83 @@ export default function Restaurants() {
   }, [searchParams]);
 
   const handlePageChange = (newPage) => {
-    console.log(newPage, "newPage");
     const validPage = Number(newPage);
     if (!isNaN(validPage)) {
       setSearchParams({ page: validPage.toString() });
     }
   };
 
+  const handleRowClick = (restaurantId) => {
+    console.log(`Navigating to: /restaurants/${restaurantId}`);
+    navigate(`/restaurants/${restaurantId}`);
+  };
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Restaurants</h1>
-      <div className="h-96 overflow-y-scroll bg-gray-100 rounded shadow">
-        <ul>
-          {content.map((restaurant) => (
-            <li key={restaurant.camis} className="p-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold">{restaurant.name}</h2>
-              <p>
-                {restaurant.street}, {restaurant.borough}
-              </p>
-              <p>{restaurant.phone}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="flex justify-between items-center mt-4">
-        <button
-          disabled={currentPage <= 1}
-          onClick={() => handlePageChange(currentPage - 1)}
-          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <span>Page {currentPage}</span>
-        <button
-          disabled={currentPage >= totalPages}
-          onClick={() => handlePageChange(currentPage + 1)}
-          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-        >
-          Next
-        </button>
+    <div
+      className="flex p-10 items-center justify-center min-h-screen"
+      style={{
+        backgroundColor: "black",
+        backgroundImage: "url('https://wallpaperaccess.com/full/3692914.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div
+        className="w-4/5 p-6 rounded-lg shadow-lg"
+        style={{ backgroundColor: "white" }}
+      >
+        <h1 className="text-2xl font-bold mb-4">Restaurants</h1>
+        <div className="max-h-[50vh] overflow-y-auto">
+          <Table className="bg-gray-100 rounded shadow">
+            <TableHeader className="bg-gray-300">
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Address</TableHead>
+                <TableHead>Phone</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {content.map((restaurant) => (
+                <TableRow
+                  key={restaurant.camis}
+                  className="cursor-pointer hover:bg-gray-200"
+                  onClick={() => handleRowClick(restaurant.camis)}
+                >
+                  <TableCell>{restaurant.name}</TableCell>
+                  <TableCell>
+                    {restaurant.street}, {restaurant.borough}
+                  </TableCell>
+                  <TableCell>{restaurant.phone}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex justify-between items-center mt-4 w-full">
+          <div className="w-1/2 flex justify-between items-center px-8">
+            <Button
+              variant="default"
+              disabled={currentPage <= 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="flex-shrink-0"
+            >
+              Previous
+            </Button>
+            <span className="flex-grow text-center">Page {currentPage}</span>
+            <Button
+              variant="default"
+              disabled={currentPage >= totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="flex-shrink-0"
+            >
+              Next
+            </Button>
+          </div>
+
+          <div className="w-1/2 pl-10">
+            <Outlet />
+          </div>
+        </div>
       </div>
     </div>
   );
