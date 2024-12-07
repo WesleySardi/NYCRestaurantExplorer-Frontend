@@ -18,18 +18,12 @@ export async function loader({ params }) {
 export default function RestaurantsDetails() {
   const { restaurant } = useLoaderData();
 
-  useEffect(() => {
-    // Aqui você pode fazer alguma lógica extra se necessário para carregar dados adicionais
-    console.log(`Restaurant ID: ${restaurant}`);
-  }, [restaurant]);
-
   return (
     <div>
       <h1>Name: {restaurant.name}</h1>
       <p>
         Address: {restaurant.street}, {restaurant.borough}
       </p>
-      <p>Phone: {restaurant.phone}</p>
       <p>Phone: {restaurant.phone}</p>
     </div>
   );

@@ -1,0 +1,11 @@
+/* Estilos customizados */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: white;
+  border-radius: 3px;
+}
+
+/* Outros estilos */

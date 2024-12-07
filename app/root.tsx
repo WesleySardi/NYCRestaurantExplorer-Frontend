@@ -8,6 +8,8 @@ import {
 import type { LinksFunction } from "@remix-run/node";
 
 import "./tailwind.css";
+import { AppSidebar } from "./components/ui/app-sidebar";
+import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -41,5 +43,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <div className="absolute w-full h-full">
+        <Outlet />
+      </div>
+      <SidebarTrigger
+        style={{ position: "absolute", top: 0, right: 0, color: "grey" }}
+      />
+    </SidebarProvider>
+  );
 }

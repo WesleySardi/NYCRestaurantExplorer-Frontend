@@ -52,13 +52,12 @@ export default function Restaurants() {
   };
 
   const handleRowClick = (restaurantId) => {
-    console.log(`Navigating to: /restaurants/${restaurantId}`);
     navigate(`/restaurants/${restaurantId}`);
   };
 
   return (
     <div
-      className="flex p-10 items-center justify-center min-h-screen"
+      className="flex flex-col items-center justify-center min-h-screen select-none"
       style={{
         backgroundColor: "black",
         backgroundImage: "url('https://wallpaperaccess.com/full/3692914.jpg')",
@@ -66,11 +65,11 @@ export default function Restaurants() {
         backgroundPosition: "center",
       }}
     >
+      <h1 className="text-2xl font-bold mb-4 text-white">Restaurants</h1>
       <div
         className="w-4/5 p-6 rounded-lg shadow-lg"
         style={{ backgroundColor: "white" }}
       >
-        <h1 className="text-2xl font-bold mb-4">Restaurants</h1>
         <div className="max-h-[50vh] overflow-y-auto">
           <Table className="bg-gray-100 rounded shadow">
             <TableHeader className="bg-gray-300">
