@@ -9,8 +9,19 @@ import {
   TableCell,
   TableHead,
 } from "../components/ui/table";
-import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
 import { useNavigate } from "@remix-run/react";
+
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../components/ui/pagination";
+import { Button } from "~/components/ui/button";
 
 export async function loader({ request }) {
   const url = new URL(request.url);
@@ -32,7 +43,11 @@ export async function loader({ request }) {
 }
 
 export default function Restaurants() {
-  const { content, totalPages, pageable } = useLoaderData();
+  const {
+    content,
+    totalPages,
+    pageable,
+  }: { content: any; totalPages: number; pageable: any } = useLoaderData();
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
@@ -44,39 +59,38 @@ export default function Restaurants() {
     }
   }, [searchParams]);
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (newPage: number) => {
     const validPage = Number(newPage);
     if (!isNaN(validPage)) {
       setSearchParams({ page: validPage.toString() });
     }
   };
 
-  const handleRowClick = (restaurantId) => {
+  const handleRowClick = (restaurantId: number) => {
     navigate(`/restaurants/${restaurantId}`);
   };
 
   return (
-    <div
-      className="flex flex-col items-center justify-center min-h-screen select-none"
-      style={{
-        backgroundColor: "black",
-        backgroundImage: "url('https://wallpaperaccess.com/full/3692914.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <h1 className="text-2xl font-bold mb-4 text-white">Restaurants</h1>
+    <div className="w-3/4 flex flex-col items-center justify-center select-none">
+      <div className="flex text-2xl p-3 font-bold text-white bg-black rounded-t-md w-full text-left">
+        <h1 className="w-2/3 pl-5">Restaurants</h1>
+        <div className="flex items-center space-x-2 w-1/3 justify-end text-right">
+          <Input type="email" placeholder="Email" />
+          <Button type="submit">Search</Button>
+        </div>
+      </div>
+
       <div
-        className="w-4/5 p-6 rounded-lg shadow-lg"
+        className="w-full p-6 rounded-b-md shadow-lg"
         style={{ backgroundColor: "white" }}
       >
-        <div className="max-h-[50vh] overflow-y-auto">
+        <div className="max-h-[50vh] overflow-y-auto rounded-t-md">
           <Table className="bg-gray-100 rounded shadow">
             <TableHeader className="bg-gray-300">
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Address</TableHead>
-                <TableHead>Phone</TableHead>
+                <TableHead className="w-2/5 text-left">Name</TableHead>
+                <TableHead className="w-2/5 text-left">Address</TableHead>
+                <TableHead className="w-1/5 text-left">Phone</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -86,37 +100,52 @@ export default function Restaurants() {
                   className="cursor-pointer hover:bg-gray-200"
                   onClick={() => handleRowClick(restaurant.camis)}
                 >
-                  <TableCell>{restaurant.name}</TableCell>
-                  <TableCell>
+                  <TableCell className="w-2/5 text-left">
+                    {restaurant.name}
+                  </TableCell>
+                  <TableCell className="w-2/5 text-left">
                     {restaurant.street}, {restaurant.borough}
                   </TableCell>
-                  <TableCell>{restaurant.phone}</TableCell>
+                  <TableCell className="w-1/5 text-left">
+                    {restaurant.phone}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
-        <div className="flex justify-between items-center mt-4 w-full">
-          <div className="w-1/2 flex justify-between items-center px-8">
-            <Button
-              variant="default"
-              disabled={currentPage <= 1}
-              onClick={() => handlePageChange(currentPage - 1)}
-              className="flex-shrink-0"
-            >
-              Previous
-            </Button>
-            <span className="flex-grow text-center">Page {currentPage}</span>
-            <Button
-              variant="default"
-              disabled={currentPage >= totalPages}
-              onClick={() => handlePageChange(currentPage + 1)}
-              className="flex-shrink-0"
-            >
-              Next
-            </Button>
+        <div className="flex justify-between items-center mt-4 w-full text-2xl p-3 font-bold text-white bg-black rounded-b-md w-full text-center">
+          <div className="w-1/2 flex justify-between items-center px-8 ">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() =>
+                      currentPage > 1 && handlePageChange(currentPage - 1)
+                    }
+                    className="flex-shrink-0 px-10 py-7 text-lg"
+                  />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink className="flex-grow text-center text-hg text-lg">
+                    {currentPage}
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() =>
+                      currentPage <= totalPages &&
+                      handlePageChange(currentPage + 1)
+                    }
+                    className="flex-shrink-0 px-10 py-7 text-lg"
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
-
           <div className="w-1/2 pl-10">
             <Outlet />
           </div>

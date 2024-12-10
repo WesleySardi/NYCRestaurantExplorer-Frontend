@@ -9,19 +9,19 @@ export default function Index() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen h-full">
-      <div className="flex items-center justify-center bg-gray-100 p-6 h-full">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">NYC Restaurant Explorer</h1>
-          <Button
-            variant="default"
-            onClick={() => handlePageChange()}
-            className="px-6 py-3 text-lg"
-          >
-            Explore
-          </Button>
-          <Outlet />
-        </div>
+    <div className="flex items-center h-full text-center">
+      <div>
+        <h1 className="text-5xl font-bold mb-4 text-white">
+          NYC Restaurant Explorer
+        </h1>
+        <Button
+          variant="outline"
+          onClick={() => handlePageChange()}
+          className="px-7 py-5 text-lg text-2xl"
+        >
+          Explore
+        </Button>
+        <Outlet />
       </div>
     </div>
   );

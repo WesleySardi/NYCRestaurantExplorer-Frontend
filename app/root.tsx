@@ -46,7 +46,16 @@ export default function App() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <div className="absolute w-full h-full">
+      <div
+        className="absolute w-full h-full flex items-center justify-center"
+        style={{
+          backgroundColor: "black",
+          backgroundImage:
+            "linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://wallpaperaccess.com/full/3692914.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
         <Outlet />
       </div>
       <SidebarTrigger
