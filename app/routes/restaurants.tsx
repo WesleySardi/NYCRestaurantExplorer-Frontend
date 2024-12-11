@@ -22,6 +22,7 @@ import {
   PaginationPrevious,
 } from "../components/ui/pagination";
 import { Button } from "~/components/ui/button";
+import { Combobox } from "~/components/ui/combobox";
 
 export async function loader({ request }) {
   const url = new URL(request.url);
@@ -74,9 +75,15 @@ export default function Restaurants() {
     <div className="w-3/4 flex flex-col items-center justify-center select-none">
       <div className="flex text-2xl p-3 font-bold text-white bg-black rounded-t-md w-full text-left">
         <h1 className="w-2/3 pl-5">Restaurants</h1>
-        <div className="flex items-center space-x-2 w-1/3 justify-end text-right">
+        <div className="flex items-center space-x-2 w-2/4 justify-end text-right">
+          <Combobox />
           <Input type="email" placeholder="Email" />
-          <Button type="submit">Search</Button>
+          <Button
+            type="submit"
+            className="flex-shrink-0 hover:bg-gray-700 text-white rounded bg-gray-600"
+          >
+            Search
+          </Button>
         </div>
       </div>
 
@@ -123,7 +130,7 @@ export default function Restaurants() {
                     onClick={() =>
                       currentPage > 1 && handlePageChange(currentPage - 1)
                     }
-                    className="flex-shrink-0 px-10 py-7 text-lg"
+                    className="flex-shrink-0 px-10 py-7 text-lg cursor-pointer"
                   />
                 </PaginationItem>
                 <PaginationItem>
@@ -140,7 +147,7 @@ export default function Restaurants() {
                       currentPage <= totalPages &&
                       handlePageChange(currentPage + 1)
                     }
-                    className="flex-shrink-0 px-10 py-7 text-lg"
+                    className="flex-shrink-0 px-10 py-7 text-lg cursor-pointer"
                   />
                 </PaginationItem>
               </PaginationContent>
