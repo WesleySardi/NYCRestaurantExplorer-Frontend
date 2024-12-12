@@ -1,6 +1,8 @@
 import { Outlet, useLoaderData, useSearchParams } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
 import {
   Table,
   TableHeader,
@@ -58,6 +60,7 @@ export default function Restaurants() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [inputText, setInputText] = useState("");
+  const [isEditAllowed, setIsEditAllowed] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -93,6 +96,7 @@ export default function Restaurants() {
   };
 
   const handleRowClick = (restaurantId: number) => {
+    setIsEditAllowed(true);
     navigate(`/restaurants/${restaurantId}`);
   };
 
@@ -115,15 +119,22 @@ export default function Restaurants() {
     setSearchParams(allParams);
   }
 
+  const handleCreateOrEditClick = () => {
+    navigate(`/restaurantsForm`);
+  };
+
   return (
     <div className="w-3/4 flex flex-col items-center justify-center select-none">
-      <div className="flex text-2xl p-3 font-bold text-white bg-black rounded-t-md w-full text-left">
+      <div
+        className="flex text-2xl p-3 font-bold text-white bg-black rounded-t-md w-full text-left"
+        style={{ backgroundColor: "#19213B" }}
+      >
         <h1 className="w-2/3 pl-5">Restaurants</h1>
         <div className="flex items-center space-x-2 w-2/4 justify-end text-right">
           <Combobox />
           <Input
             type="email"
-            placeholder="Email"
+            placeholder="Search"
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -140,40 +151,67 @@ export default function Restaurants() {
           </Button>
         </div>
       </div>
-
       <div
         className="w-full p-6 rounded-b-md shadow-lg"
         style={{ backgroundColor: "white" }}
       >
-        <div className="max-h-[50vh] overflow-y-auto rounded-t-md">
-          <Table className="bg-gray-100 rounded shadow">
-            <TableHeader className="bg-gray-300">
-              <TableRow>
-                <TableHead className="w-2/5 text-left">Name</TableHead>
-                <TableHead className="w-2/5 text-left">Address</TableHead>
-                <TableHead className="w-1/5 text-left">Phone</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {content.map((restaurant) => (
-                <TableRow
-                  key={restaurant.camis}
-                  className="cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleRowClick(restaurant.camis)}
-                >
-                  <TableCell className="w-2/5 text-left">
-                    {restaurant.name}
-                  </TableCell>
-                  <TableCell className="w-2/5 text-left">
-                    {restaurant.street}, {restaurant.borough}
-                  </TableCell>
-                  <TableCell className="w-1/5 text-left">
-                    {restaurant.phone}
-                  </TableCell>
+        <div className="flex h-full">
+          <div className="flex flex-col w-1/12">
+            <Button
+              type="submit"
+              className="h-1/2 hover:bg-gray-700 text-white rounded bg-[#3D4C7D] mb-2 mr-2"
+              onClick={() => handleCreateOrEditClick()}
+            >
+              <FontAwesomeIcon
+                icon={faPlus}
+                size="1x"
+                className="text-black-500"
+              />
+            </Button>
+            <Button
+              type="submit"
+              className="h-1/2 hover:bg-gray-700 text-white rounded bg-[#3D4C7D] mr-2"
+              onClick={() => handleCreateOrEditClick()}
+              disabled={!isEditAllowed}
+            >
+              <FontAwesomeIcon
+                icon={faEdit}
+                size="1x"
+                className="text-black-500"
+              />
+            </Button>
+          </div>
+
+          <div className="max-h-[50vh] overflow-y-auto rounded-t-md w-11/12 ml-2">
+            <Table className="bg-gray-100 rounded shadow">
+              <TableHeader className="bg-gray-300">
+                <TableRow>
+                  <TableHead className="w-2/5 text-left">Name</TableHead>
+                  <TableHead className="w-2/5 text-left">Address</TableHead>
+                  <TableHead className="w-1/5 text-left">Phone</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {content.map((restaurant) => (
+                  <TableRow
+                    key={restaurant.camis}
+                    className="cursor-pointer hover:bg-gray-200"
+                    onClick={() => handleRowClick(restaurant.camis)}
+                  >
+                    <TableCell className="w-2/5 text-left">
+                      {restaurant.name}
+                    </TableCell>
+                    <TableCell className="w-2/5 text-left">
+                      {restaurant.street}, {restaurant.borough}
+                    </TableCell>
+                    <TableCell className="w-1/5 text-left">
+                      {restaurant.phone}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
         <div className="flex justify-between items-center mt-4 w-full text-2xl p-3 font-bold text-white bg-black rounded-b-md w-full text-center">
           <div className="w-1/2 flex justify-between items-center px-8 ">
