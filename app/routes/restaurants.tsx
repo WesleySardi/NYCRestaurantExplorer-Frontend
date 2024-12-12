@@ -28,10 +28,16 @@ export async function loader({ request }) {
   const url = new URL(request.url);
   const page = Number(url.searchParams.get("page")) || 1;
   const size = Number(url.searchParams.get("size")) || 20;
+  const grade = url.searchParams.get("grade") || null;
+  const borough = url.searchParams.get("borough") || null;
+  const cuisine = url.searchParams.get("cuisine") || null;
   const sortBy = url.searchParams.get("sortBy") || "name";
   const sortDirection = url.searchParams.get("sortDirection") || "asc";
 
-  const apiUrl = `http://localhost:8080/api/restaurants?page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}`;
+  const apiUrl = `http://localhost:8080/api/restaurants?page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}${
+    grade ? `&grade=${grade}` : ""
+  }${borough ? `&borough=${borough}` : ""}`;
+  console.log(apiUrl, "apiUrl");
   const response = await fetch(apiUrl);
   if (!response.ok) {
     throw new Response("Failed to fetch restaurants", {
@@ -51,19 +57,38 @@ export default function Restaurants() {
   }: { content: any; totalPages: number; pageable: any } = useLoaderData();
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
+  const [inputText, setInputText] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const page = searchParams.get("page");
+    const newParams = new URLSearchParams(searchParams);
+    const updatedParams: { [key: string]: string } = {};
+
+    newParams.forEach((value, key) => {
+      updatedParams[key] = value;
+    });
+
     if (page) {
       setCurrentPage(Number(page));
     }
-  }, [searchParams]);
+
+    const parameters = ["borough", "grade", "cuisine"];
+    parameters.forEach((param) => {
+      if (newParams.has(param)) {
+        updatedParams[param] = inputText;
+      }
+    });
+
+    setSearchParams(newParams);
+  }, [searchParams, inputText]);
 
   const handlePageChange = (newPage: number) => {
     const validPage = Number(newPage);
     if (!isNaN(validPage)) {
-      setSearchParams({ page: validPage.toString() });
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set("page", validPage.toString());
+      setSearchParams(newParams);
     }
   };
 
@@ -71,16 +96,45 @@ export default function Restaurants() {
     navigate(`/restaurants/${restaurantId}`);
   };
 
+  function handleSearchSubmit(): void {
+    const newParams = new URLSearchParams(searchParams);
+    const parameters = ["borough", "grade", "cuisine"];
+
+    const allParams: { [key: string]: string } = {};
+
+    newParams.forEach((value, key) => {
+      allParams[key] = value;
+    });
+
+    parameters.forEach((param) => {
+      if (newParams.has(param)) {
+        allParams[param] = inputText;
+      }
+    });
+
+    setSearchParams(allParams);
+  }
+
   return (
     <div className="w-3/4 flex flex-col items-center justify-center select-none">
       <div className="flex text-2xl p-3 font-bold text-white bg-black rounded-t-md w-full text-left">
         <h1 className="w-2/3 pl-5">Restaurants</h1>
         <div className="flex items-center space-x-2 w-2/4 justify-end text-right">
           <Combobox />
-          <Input type="email" placeholder="Email" />
+          <Input
+            type="email"
+            placeholder="Email"
+            onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearchSubmit();
+              }
+            }}
+          />
           <Button
             type="submit"
             className="flex-shrink-0 hover:bg-gray-700 text-white rounded bg-gray-600"
+            onClick={() => handleSearchSubmit()}
           >
             Search
           </Button>

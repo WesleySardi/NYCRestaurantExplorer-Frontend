@@ -44,10 +44,6 @@ export function Combobox() {
     cuisine: false,
   });
 
-  React.useEffect(() => {
-    console.log(value, "value");
-  }, [value]);
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -55,13 +51,13 @@ export function Combobox() {
           variant="default"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between hover:bg-gray-700 bg-gray-600"
+          className="w-[500px] justify-between hover:bg-gray-700 bg-gray-600"
         >
-          {Object.keys(value).some((key) => value[key]) // Verifica se algum valor é true
-            ? Object.keys(value) // Obtém as chaves do estado `value`
-                .filter((key) => value[key]) // Filtra apenas os valores `true`
-                .map((key) => frameworks.find((fw) => fw.value === key)?.label) // Mapeia para os labels correspondentes
-                .join(", ") // Junta os labels com vírgulas
+          {Object.keys(value).some((key) => value[key])
+            ? Object.keys(value)
+                .filter((key) => value[key])
+                .map((key) => frameworks.find((fw) => fw.value === key)?.label)
+                .join(", ")
             : "Search options"}
           <ChevronsUpDown className="opacity-50" />
         </Button>
@@ -88,7 +84,7 @@ export function Combobox() {
 
                         Object.keys(newValue).forEach((key) => {
                           if (newValue[key]) {
-                            newParams.set(key, "true");
+                            newParams.set(key, "");
                           } else {
                             newParams.delete(key);
                           }
@@ -99,8 +95,6 @@ export function Combobox() {
 
                       return newValue;
                     });
-
-                    setOpen(false);
                   }}
                   className="cursor-pointer"
                 >
