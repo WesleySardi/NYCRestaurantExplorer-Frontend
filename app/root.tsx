@@ -55,6 +55,7 @@ export default function App() {
             "linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://wallpaperaccess.com/full/3692914.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
+          backgroundAttachment: "fixed",
         }}
       >
         <Outlet />

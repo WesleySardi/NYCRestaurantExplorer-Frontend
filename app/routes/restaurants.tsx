@@ -61,6 +61,7 @@ export default function Restaurants() {
   const [currentPage, setCurrentPage] = useState(1);
   const [inputText, setInputText] = useState("");
   const [isEditAllowed, setIsEditAllowed] = useState(false);
+  const [currentItem, setCurrentItem] = useState<number>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -97,6 +98,7 @@ export default function Restaurants() {
 
   const handleRowClick = (restaurantId: number) => {
     setIsEditAllowed(true);
+    setCurrentItem(restaurantId);
     navigate(`/restaurants/${restaurantId}`);
   };
 
@@ -119,8 +121,12 @@ export default function Restaurants() {
     setSearchParams(allParams);
   }
 
-  const handleCreateOrEditClick = () => {
-    navigate(`/restaurantsForm`);
+  const handleCreateOrEditClick = (create: boolean) => {
+    if (create) {
+      navigate(`/restaurantsFormCreate`);
+    } else {
+      navigate(`/restaurantsFormUpdate/${currentItem}`);
+    }
   };
 
   return (
@@ -160,7 +166,7 @@ export default function Restaurants() {
             <Button
               type="submit"
               className="h-1/2 hover:bg-gray-700 text-white rounded bg-[#3D4C7D] mb-2 mr-2"
-              onClick={() => handleCreateOrEditClick()}
+              onClick={() => handleCreateOrEditClick(true)}
             >
               <FontAwesomeIcon
                 icon={faPlus}
@@ -171,7 +177,7 @@ export default function Restaurants() {
             <Button
               type="submit"
               className="h-1/2 hover:bg-gray-700 text-white rounded bg-[#3D4C7D] mr-2"
-              onClick={() => handleCreateOrEditClick()}
+              onClick={() => handleCreateOrEditClick(false)}
               disabled={!isEditAllowed}
             >
               <FontAwesomeIcon
