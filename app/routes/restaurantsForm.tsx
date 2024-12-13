@@ -1,8 +1,52 @@
-import { useFetcher } from "@remix-run/react";
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
+import { toast } from "~/hooks/use-toast";
 
 export default function RestaurantForm() {
-  const fetcher = useFetcher();
+  const [formData, setFormData] = useState({
+    name: "",
+    cuisineType: "",
+    street: "",
+    borough: "",
+    zipcode: "",
+    phone: "",
+    currentGrade: "",
+    lastInspectionDate: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:8080/api/restaurants", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "*/*",
+        },
+        body: JSON.stringify({
+          ...formData,
+          lastInspectionDate: formData.lastInspectionDate,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success("Restaurant added successfully!");
+      } else {
+        const errorText = await response.text();
+        toast.error(`Failed to add restaurant: ${errorText}`);
+      }
+    } catch (error) {
+      toast.error(`An error occurred: ${error.message}`);
+    }
+  };
 
   return (
     <div className="w-2/3 rounded mx-auto">
@@ -13,9 +57,8 @@ export default function RestaurantForm() {
         className="p-6 w-1/2 mx-auto flex justify-center items-center min-h-[50vh] rounded-b-md shadow-lg"
         style={{ backgroundColor: "#19213B" }}
       >
-        <fetcher.Form
-          method="post"
-          action="http://localhost:8080/api/restaurants"
+        <form
+          onSubmit={handleSubmit}
           className="restaurant-form w-full max-w-lg p-4 rounded"
           style={{ backgroundColor: "#27304F" }}
         >
@@ -30,6 +73,8 @@ export default function RestaurantForm() {
               id="name"
               name="name"
               placeholder="Restaurant's name"
+              value={formData.name}
+              onChange={handleChange}
               required
             />
           </div>
@@ -44,6 +89,8 @@ export default function RestaurantForm() {
               id="cuisineType"
               name="cuisineType"
               placeholder="Restaurant's cuisine type"
+              value={formData.cuisineType}
+              onChange={handleChange}
               required
             />
           </div>
@@ -58,6 +105,8 @@ export default function RestaurantForm() {
               id="street"
               name="street"
               placeholder="Restaurant's street"
+              value={formData.street}
+              onChange={handleChange}
               required
             />
           </div>
@@ -72,6 +121,8 @@ export default function RestaurantForm() {
               id="borough"
               name="borough"
               placeholder="Restaurant's borough"
+              value={formData.borough}
+              onChange={handleChange}
               required
             />
           </div>
@@ -86,6 +137,8 @@ export default function RestaurantForm() {
               id="zipcode"
               name="zipcode"
               placeholder="Restaurant's zipcode"
+              value={formData.zipcode}
+              onChange={handleChange}
               required
             />
           </div>
@@ -100,6 +153,8 @@ export default function RestaurantForm() {
               id="phone"
               name="phone"
               placeholder="Restaurant's phone"
+              value={formData.phone}
+              onChange={handleChange}
               required
             />
           </div>
@@ -114,6 +169,8 @@ export default function RestaurantForm() {
               id="currentGrade"
               name="currentGrade"
               placeholder="Restaurant's current grade"
+              value={formData.currentGrade}
+              onChange={handleChange}
               required
             />
           </div>
@@ -130,7 +187,8 @@ export default function RestaurantForm() {
               type="date"
               id="lastInspectionDate"
               name="lastInspectionDate"
-              placeholder="Teste"
+              value={formData.lastInspectionDate}
+              onChange={handleChange}
               required
             />
           </div>
@@ -140,7 +198,7 @@ export default function RestaurantForm() {
           >
             Submit
           </Button>
-        </fetcher.Form>
+        </form>
       </div>
     </div>
   );

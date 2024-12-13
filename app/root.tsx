@@ -10,6 +10,7 @@ import type { LinksFunction } from "@remix-run/node";
 import "./tailwind.css";
 import { AppSidebar } from "./components/ui/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
+import ToastContainer from "./components/ui/toastcontainer";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -61,6 +62,7 @@ export default function App() {
       <SidebarTrigger
         style={{ position: "absolute", top: 0, right: 0, color: "grey" }}
       />
+      <ToastContainer />
     </SidebarProvider>
   );
 }
