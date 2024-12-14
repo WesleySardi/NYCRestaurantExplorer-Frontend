@@ -24,7 +24,7 @@ import {
   PaginationPrevious,
 } from "../components/ui/pagination";
 import { Button } from "~/components/ui/button";
-import { Combobox } from "~/components/ui/combobox";
+import { Comboboxsearch } from "~/components/ui/comboboxsearch";
 
 export async function loader({ request }) {
   const url = new URL(request.url);
@@ -39,7 +39,6 @@ export async function loader({ request }) {
   const apiUrl = `http://localhost:8080/api/restaurants?page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}${
     grade ? `&grade=${grade}` : ""
   }${borough ? `&borough=${borough}` : ""}`;
-  console.log(apiUrl, "apiUrl");
   const response = await fetch(apiUrl);
   if (!response.ok) {
     throw new Response("Failed to fetch restaurants", {
@@ -137,7 +136,13 @@ export default function Restaurants() {
       >
         <h1 className="w-2/3 pl-5">Restaurants</h1>
         <div className="flex items-center space-x-2 w-2/4 justify-end text-right">
-          <Combobox />
+          <Comboboxsearch
+            frameworks={[
+              { value: "cuisine", label: "Cuisine" },
+              { value: "grade", label: "Grade" },
+              { value: "borough", label: "Borough" },
+            ]}
+          />
           <Input
             type="email"
             placeholder="Search"

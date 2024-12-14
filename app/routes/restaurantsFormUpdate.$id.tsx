@@ -1,10 +1,12 @@
-// routes/restaurants.$id.tsx
 import { useLoaderData } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "~/hooks/use-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { DatePicker } from "~/components/ui/datepicker";
+import React from "react";
+import { Combobox } from "~/components/ui/combobox";
 
 export async function loader({ params }) {
   const { id } = params;
@@ -26,7 +28,9 @@ export default function RestaurantsFormUpdate() {
   const newItemRef = useRef(null);
   const [isNewItemAdded, setIsNewItemAdded] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
-
+  const [date, setDate] = React.useState<Date>();
+  const [dateChanged, setDateChanged] = useState({});
+  const [initialFormData, setInitialFormData] = useState({});
   const [formData, setFormData] = useState({
     name: restaurant?.name,
     cuisineType: restaurant?.cuisineType,
@@ -81,6 +85,56 @@ export default function RestaurantsFormUpdate() {
     }));
   };
 
+  const handleChangeComboBox = (name, value, index) => {
+    let formattedValue = value;
+
+    if (name === "date" && value) {
+      formattedValue = formatDate(value);
+    }
+
+    const newInspections = [...formData.inspections];
+    const inspection = newInspections[index];
+
+    const initialInspection = initialFormData[inspection.id];
+
+    if (formattedValue) {
+      newInspections[index] = {
+        ...inspection,
+        [name]: formattedValue,
+        inspectionDate: new Date().toISOString(),
+      };
+
+      if (
+        initialInspection &&
+        initialInspection.grade === newInspections[index].grade &&
+        initialInspection.criticalFlag === newInspections[index].criticalFlag
+      ) {
+        newInspections[index] = {
+          ...newInspections[index],
+          inspectionDate: initialInspection.inspectionDate,
+        };
+      }
+      console.log(newInspections, "newInspections");
+      setFormData((prevData) => ({
+        ...prevData,
+        inspections: newInspections,
+      }));
+    }
+  };
+
+  const handleDatePickerChange = (value, index, fieldName) => {
+    const newInspections = [...formData.inspections];
+    newInspections[index] = {
+      ...newInspections[index],
+      [fieldName]: value,
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      inspections: newInspections,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -113,12 +167,12 @@ export default function RestaurantsFormUpdate() {
 
     try {
       for (const index of selectedIds) {
-        const instruction = formData.inspections[index];
+        const inspection = formData.inspections[index];
 
-        if (instruction) {
-          if (instruction.id !== null) {
+        if (inspection) {
+          if (inspection.id !== null) {
             const response = await fetch(
-              `http://localhost:8080/api/inspections/${instruction.id}`,
+              `http://localhost:8080/api/inspections/${inspection.id}`,
               {
                 method: "DELETE",
                 headers: {
@@ -130,7 +184,7 @@ export default function RestaurantsFormUpdate() {
 
             if (response.ok) {
               toast.success(
-                `Instruction with id ${instruction.id} deleted successfully!`
+                `Inspection with id ${inspection.id} deleted successfully!`
               );
               newInspections.splice(index, 1);
 
@@ -141,7 +195,7 @@ export default function RestaurantsFormUpdate() {
             } else {
               const errorText = await response.text();
               toast.error(
-                `Failed to delete instruction with id ${instruction.id}: ${errorText}`
+                `Failed to delete inspection with id ${inspection.id}: ${errorText}`
               );
             }
           } else {
@@ -166,6 +220,17 @@ export default function RestaurantsFormUpdate() {
       setIsNewItemAdded(false);
     }
   }, [isNewItemAdded, formData.inspections]);
+
+  useEffect(() => {
+    const initialData = {};
+    formData.inspections.forEach((inspection) => {
+      initialData[inspection.id] = {
+        ...inspection,
+      };
+    });
+
+    setInitialFormData(initialData);
+  }, []);
 
   return (
     <div className="w-full flex rounded mx-auto">
@@ -287,9 +352,14 @@ export default function RestaurantsFormUpdate() {
                         selectedIds.includes(index) ? "bg-red-900" : ""
                       }`}
                       onClick={(e) => handleCardClick(e, index)}
+                      ref={
+                        index === formData.inspections.length - 1
+                          ? newItemRef
+                          : null
+                      }
                     >
                       <h1 className="block text-white mb-2 border-b pb-3 font-bold">
-                        Instruction {index + 1}
+                        Inspections {index + 1}
                       </h1>
                       <div className="mb-4">
                         <label
@@ -298,20 +368,19 @@ export default function RestaurantsFormUpdate() {
                         >
                           Grade:
                         </label>
-                        <input
-                          className="w-full p-2 text-black rounded"
-                          style={{ backgroundColor: "white" }}
-                          type="text"
-                          id={`grade-${index}`}
-                          name="grade"
-                          placeholder="Inspection grade"
+                        <Combobox
+                          frameworks={[
+                            { value: "N", label: "N" },
+                            { value: "A", label: "A" },
+                            { value: "B", label: "B" },
+                            { value: "C", label: "C" },
+                            { value: "Z", label: "Z" },
+                            { value: "P", label: "P" },
+                          ]}
                           value={inspection.grade ?? null}
-                          onChange={(e) => handleChange(e, index)}
-                          ref={
-                            index === formData.inspections.length - 1
-                              ? newItemRef
-                              : null
-                          }
+                          onChange={handleChangeComboBox}
+                          name="grade"
+                          index={index}
                         />
                       </div>
                       <div className="mb-4">
@@ -321,15 +390,19 @@ export default function RestaurantsFormUpdate() {
                         >
                           Critical Flag:
                         </label>
-                        <input
-                          className="w-full p-2 text-black rounded"
-                          style={{ backgroundColor: "white" }}
-                          type="text"
-                          id={`criticalFlag-${index}`}
-                          name="criticalFlag"
-                          placeholder="Critical flag"
+                        <Combobox
+                          frameworks={[
+                            { value: "Critical", label: "Critical" },
+                            { value: "Not Critical", label: "Not Critical" },
+                            {
+                              value: "Not Applicable",
+                              label: "Not Applicable",
+                            },
+                          ]}
                           value={inspection.criticalFlag ?? null}
-                          onChange={(e) => handleChange(e, index)}
+                          onChange={handleChangeComboBox}
+                          name="criticalFlag"
+                          index={index}
                         />
                       </div>
                       <div className="mb-4">
@@ -339,14 +412,19 @@ export default function RestaurantsFormUpdate() {
                         >
                           Inspection Date:
                         </label>
-                        <input
-                          className="w-full p-2 text-black rounded"
-                          style={{ backgroundColor: "white" }}
-                          type="date"
-                          id={`inspectionDate-${index}`}
-                          name="inspectionDate"
-                          value={formatDate(inspection.inspectionDate) ?? null}
-                          onChange={(e) => handleChange(e, index)}
+                        <DatePicker
+                          date={
+                            inspection.inspectionDate ??
+                            new Date().toISOString()
+                          }
+                          setDate={(value) =>
+                            handleDatePickerChange(
+                              value,
+                              index,
+                              "inspectionDate"
+                            )
+                          }
+                          disabled
                         />
                       </div>
                       <div className="mb-4">
@@ -356,14 +434,14 @@ export default function RestaurantsFormUpdate() {
                         >
                           Record Date:
                         </label>
-                        <input
-                          className="w-full p-2 text-black rounded"
-                          style={{ backgroundColor: "white" }}
-                          type="date"
-                          id={`recordDate-${index}`}
-                          name="recordDate"
-                          value={formatDate(inspection.recordDate) ?? null}
-                          onChange={(e) => handleChange(e, index)}
+                        <DatePicker
+                          date={
+                            inspection.recordDate ?? new Date().toISOString()
+                          }
+                          setDate={(value) =>
+                            handleDatePickerChange(value, index, "recordDate")
+                          }
+                          disabled
                         />
                       </div>
                     </div>
@@ -401,7 +479,7 @@ export default function RestaurantsFormUpdate() {
           }}
         >
           <FontAwesomeIcon icon={faPlus} size="1x" className="text-black-500" />{" "}
-          Add Instruction
+          Add Inspections
         </Button>
         <Button
           className="w-1/3 ml-4 p-8 text-white rounded bg-red-800 hover:bg-gray-700"
@@ -412,7 +490,7 @@ export default function RestaurantsFormUpdate() {
             size="1x"
             className="text-black-500"
           />{" "}
-          Delete Instruction
+          Delete Inspections
         </Button>
       </div>
     </div>

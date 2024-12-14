@@ -4,7 +4,7 @@ import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 
 import { cn } from "../../lib/utils";
-import { Button } from "../../components/ui/button";
+import { Button } from "./button";
 import {
   Command,
   CommandEmpty,
@@ -12,37 +12,24 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "../../components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../../components/ui/popover";
-import { useSearchParams } from "@remix-run/react";
+} from "./command";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
-const frameworks = [
-  {
-    value: "cuisine",
-    label: "Cuisine",
-  },
-  {
-    value: "grade",
-    label: "Grade",
-  },
-  {
-    value: "borough",
-    label: "Borough",
-  },
-];
+interface ComboboxProps {
+  frameworks: { value: string; label: string }[];
+  value: string | null;
+  onChange: (value: string, index: number) => void;
+  index: number;
+}
 
-export function Combobox() {
-  const [searchParams, setSearchParams] = useSearchParams();
+export function Combobox({
+  frameworks,
+  value,
+  onChange,
+  name,
+  index,
+}: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState({
-    borough: false,
-    grade: false,
-    cuisine: false,
-  });
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -51,14 +38,9 @@ export function Combobox() {
           variant="default"
           role="combobox"
           aria-expanded={open}
-          className="w-[500px] justify-between hover:bg-gray-700 bg-gray-600"
+          className="w-full justify-between hover:bg-white-700 bg-white text-black"
         >
-          {Object.keys(value).some((key) => value[key])
-            ? Object.keys(value)
-                .filter((key) => value[key])
-                .map((key) => frameworks.find((fw) => fw.value === key)?.label)
-                .join(", ")
-            : "Search options"}
+          {value ?? "Select an option"}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -66,35 +48,15 @@ export function Combobox() {
         <Command>
           <CommandInput placeholder="Search..." />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>No option found.</CommandEmpty>
             <CommandGroup>
               {frameworks.map((framework) => (
                 <CommandItem
-                  key={framework.value}
+                  key={index}
                   value={framework.value}
-                  onSelect={(currentValue) => {
-                    setValue((prevValue) => {
-                      const newValue = {
-                        ...prevValue,
-                        [currentValue]: !prevValue[currentValue],
-                      };
-
-                      setSearchParams((prevParams) => {
-                        const newParams = new URLSearchParams(prevParams);
-
-                        Object.keys(newValue).forEach((key) => {
-                          if (newValue[key]) {
-                            newParams.set(key, "");
-                          } else {
-                            newParams.delete(key);
-                          }
-                        });
-
-                        return newParams;
-                      });
-
-                      return newValue;
-                    });
+                  onSelect={() => {
+                    onChange(name, framework.value, index);
+                    setOpen(false);
                   }}
                   className="cursor-pointer"
                 >
@@ -102,7 +64,7 @@ export function Combobox() {
                   <Check
                     className={cn(
                       "ml-auto",
-                      value[framework.value] ? "opacity-100" : "opacity-0"
+                      value === framework.value ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>
