@@ -38,19 +38,18 @@ export default function RestaurantsFormUpdate() {
       id: inspection?.id,
       grade: inspection?.grade,
       criticalFlag: inspection?.criticalFlag,
-      inspectionDate: formatDate(inspection?.inspectionDate),
-      recordDate: formatDate(inspection?.recordDate),
+      inspectionDate: inspection?.inspectionDate,
+      recordDate: inspection?.recordDate,
     })),
   });
 
-  function formatDate(dateString) {
-    if (!dateString) return null;
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  }
+
+    const formattedDate = date.toISOString().split("T")[0];
+
+    return formattedDate;
+  };
 
   const handleCardClick = (e, id) => {
     if (e.target.tagName === "INPUT") return;
@@ -63,9 +62,19 @@ export default function RestaurantsFormUpdate() {
   };
 
   const handleChange = (e, index) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+
+    let formattedValue = value;
+    if (type === "date") {
+      formattedValue = formatDate(value);
+    }
+
     const newInspections = [...formData.inspections];
-    newInspections[index] = { ...newInspections[index], [name]: value };
+    newInspections[index] = {
+      ...newInspections[index],
+      [name]: formattedValue,
+    };
+
     setFormData((prevData) => ({
       ...prevData,
       inspections: newInspections,
@@ -93,6 +102,57 @@ export default function RestaurantsFormUpdate() {
       } else {
         const errorText = await response.text();
         toast.error(`Failed to add restaurant: ${errorText}`);
+      }
+    } catch (error) {
+      toast.error(`An error occurred: ${error.message}`);
+    }
+  };
+
+  const handleDelete = async () => {
+    const newInspections = [...formData.inspections];
+
+    try {
+      for (const index of selectedIds) {
+        const instruction = formData.inspections[index];
+
+        if (instruction) {
+          if (instruction.id !== null) {
+            const response = await fetch(
+              `http://localhost:8080/api/inspections/${instruction.id}`,
+              {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                  Accept: "*/*",
+                },
+              }
+            );
+
+            if (response.ok) {
+              toast.success(
+                `Instruction with id ${instruction.id} deleted successfully!`
+              );
+              newInspections.splice(index, 1);
+
+              setFormData({
+                ...formData,
+                inspections: newInspections,
+              });
+            } else {
+              const errorText = await response.text();
+              toast.error(
+                `Failed to delete instruction with id ${instruction.id}: ${errorText}`
+              );
+            }
+          } else {
+            newInspections.splice(index, 1);
+
+            setFormData({
+              ...formData,
+              inspections: newInspections,
+            });
+          }
+        }
       }
     } catch (error) {
       toast.error(`An error occurred: ${error.message}`);
@@ -224,9 +284,9 @@ export default function RestaurantsFormUpdate() {
                     <div
                       key={index}
                       className={`rounded mb-3 p-4 ${
-                        selectedIds.includes(inspection.id) ? "bg-red-900" : ""
+                        selectedIds.includes(index) ? "bg-red-900" : ""
                       }`}
-                      onClick={(e) => handleCardClick(e, inspection.id)}
+                      onClick={(e) => handleCardClick(e, index)}
                     >
                       <h1 className="block text-white mb-2 border-b pb-3 font-bold">
                         Instruction {index + 1}
@@ -285,7 +345,7 @@ export default function RestaurantsFormUpdate() {
                           type="date"
                           id={`inspectionDate-${index}`}
                           name="inspectionDate"
-                          value={inspection.inspectionDate ?? null}
+                          value={formatDate(inspection.inspectionDate) ?? null}
                           onChange={(e) => handleChange(e, index)}
                         />
                       </div>
@@ -302,7 +362,7 @@ export default function RestaurantsFormUpdate() {
                           type="date"
                           id={`recordDate-${index}`}
                           name="recordDate"
-                          value={inspection.recordDate ?? null}
+                          value={formatDate(inspection.recordDate) ?? null}
                           onChange={(e) => handleChange(e, index)}
                         />
                       </div>
@@ -343,7 +403,10 @@ export default function RestaurantsFormUpdate() {
           <FontAwesomeIcon icon={faPlus} size="1x" className="text-black-500" />{" "}
           Add Instruction
         </Button>
-        <Button className="w-1/3 ml-4 p-8 text-white rounded bg-red-800 hover:bg-gray-700">
+        <Button
+          className="w-1/3 ml-4 p-8 text-white rounded bg-red-800 hover:bg-gray-700"
+          onClick={() => handleDelete()}
+        >
           <FontAwesomeIcon
             icon={faTrash}
             size="1x"
