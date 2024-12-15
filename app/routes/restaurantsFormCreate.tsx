@@ -69,23 +69,19 @@ export default function RestaurantFormCreate() {
       <h1 className="bg-black text-white text-center rounded-t-md py-4 w-2/4 mx-auto font-bold text-lg">
         New Restaurant
       </h1>
-      <div
-        className="p-6 w-1/2 mx-auto  justify-center items-center min-h-[50vh] rounded-b-md shadow-lg border-b border-l border-gray-300"
-        style={{ backgroundColor: "#19213B" }}
-      >
-        <div
-          className="restaurant-form w-full p-4 rounded overflow-y-auto max-h-[400px] w-1/2 pl-4 rounded"
-          style={{ backgroundColor: "#27304F" }}
-        >
+      <div className="px-6 w-1/2 mx-auto  justify-center items-center h-[70vh] rounded-b-md shadow-lg border-b border-l border-gray-300 bg-[#161616]">
+        <div className="restaurant-form w-full p-4 rounded overflow-y-auto w-1/2 rounded h-[60vh] bg-[#202020]">
           <RestaurantForm formData={formData} setFormData={setFormData} />
         </div>
-        <Button
-          type="submit"
-          onClick={handleSubmit}
-          className="w-full mt-4 py-2 text-white rounded bg-green-800 hover:bg-gray-700"
-        >
-          Submit
-        </Button>
+        <div className="pt-[2vh] h-[10vh] ">
+          <Button
+            type="submit"
+            onClick={handleSubmit}
+            className="w-full text-white rounded bg-green-800 hover:bg-gray-700 h-[6vh]"
+          >
+            Submit
+          </Button>
+        </div>
       </div>
     </div>
   );

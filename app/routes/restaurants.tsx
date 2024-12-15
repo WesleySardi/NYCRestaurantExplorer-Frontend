@@ -116,10 +116,7 @@ export default function Restaurants() {
 
   return (
     <div className="w-3/4 flex flex-col items-center justify-center select-none">
-      <div
-        className="flex text-2xl p-3 font-bold text-white bg-black rounded-t-md w-full text-left"
-        style={{ backgroundColor: "#19213B" }}
-      >
+      <div className="flex text-2xl p-3 font-bold text-white bg-black rounded-t-md w-full text-left bg-[#161616]">
         <h1 className="w-2/3 pl-5">Restaurants</h1>
         <SearchBar
           frameworks={[
@@ -130,20 +127,19 @@ export default function Restaurants() {
           handleSearchSubmit={handleSearchSubmit}
         />
       </div>
-      <div
-        className="w-full rounded-b-md shadow-lg h-[70vh]"
-        style={{ backgroundColor: "white" }}
-      >
+      <div className="w-full rounded-b-md shadow-lg h-[70vh] bg-white">
         <div className="flex h-[60vh]">
-          <div className="flex flex-col w-1/12 ">
+          <div className="flex flex-col w-1/12">
             <IconButton
               icon={faPlus}
               onClick={() => handleCreateOrEditClick(true)}
+              className="border-b bg-[#3D4C7D]"
             />
             <IconButton
               icon={faEdit}
               onClick={() => handleCreateOrEditClick(false)}
               disabled={!isEditAllowed}
+              className="bg-[#3D4C7D]"
             />
           </div>
           <div className="overflow-y-auto w-11/12">

@@ -18,12 +18,12 @@ const IconButton: React.FC<IconButtonProps> = ({
     <button
       type="submit"
       onClick={onClick}
-      className={`h-1/2 hover:bg-gray-700 text-white bg-[#3D4C7D] ${className} ${
+      className={`h-1/2 hover:bg-gray-700 text-white ${className} ${
         disabled ? "opacity-50 cursor-not-allowed" : ""
       }`}
       disabled={disabled}
     >
-      <FontAwesomeIcon icon={icon} size="1x" className="text-black-500" />
+      <FontAwesomeIcon icon={icon} size="2x" className="text-black-500" />
     </button>
   );
 };

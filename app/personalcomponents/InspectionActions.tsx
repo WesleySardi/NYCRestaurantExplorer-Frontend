@@ -1,19 +1,8 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "~/components/ui/button";
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../components/ui/alert-dialog";
 import AddInspectionDialog from "./AddInspectionsDialog";
+import { useState } from "react";
 
 const InspectionActions = ({
   selectedIds,
@@ -21,6 +10,11 @@ const InspectionActions = ({
   setIsNewItemAdded,
   handleDelete,
 }) => {
+  const [grade, setGrade] = useState<null | string>("N");
+  const [criticalFlag, setCriticalFlag] = useState<null | string>(
+    "Undefined Critical Flag"
+  );
+
   const handleAddInspection = () => {
     setFormData((prevData) => ({
       ...prevData,
@@ -28,14 +22,17 @@ const InspectionActions = ({
         ...prevData.inspections,
         {
           id: null,
-          grade: null,
-          criticalFlag: null,
-          inspectionDate: null,
-          recordDate: null,
+          grade: grade,
+          criticalFlag: criticalFlag,
+          inspectionDate: new Date().toISOString(),
+          recordDate: new Date().toISOString(),
         },
       ],
     }));
     setIsNewItemAdded(true);
+
+    setGrade("N");
+    setCriticalFlag("Undefined Critical Flag");
   };
 
   return (
@@ -60,6 +57,8 @@ const InspectionActions = ({
         }
         handleAction={handleAddInspection}
         type="add"
+        setGrade={setGrade}
+        setCriticalFlag={setCriticalFlag}
       />
       <AddInspectionDialog
         trigger={

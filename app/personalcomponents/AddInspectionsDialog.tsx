@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -9,8 +10,6 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "~/components/ui/alert-dialog";
-
-import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
@@ -19,8 +18,8 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+import { Combobox } from "~/components/ui/combobox";
+import { DatePicker } from "~/components/ui/datepicker";
 import {
   Select,
   SelectContent,
@@ -35,7 +34,14 @@ const AddInspectionDialog = ({
   content = null,
   type = null,
   handleAction,
+  setGrade = null,
+  setCriticalFlag = null,
 }) => {
+  const handleChangeComboBox = (name: string, value: string, index: number) => {
+    if (name === "grade") return setGrade(value);
+    if (name === "criticalFlag") return setCriticalFlag(value);
+  };
+
   return (
     <>
       {type === "delete" ? (
@@ -61,34 +67,108 @@ const AddInspectionDialog = ({
             <AlertDialogContent>
               <Card>
                 <CardHeader>
-                  <CardTitle>Create project</CardTitle>
+                  <CardTitle>Create inpection</CardTitle>
                   <CardDescription>
-                    Deploy your new project in one-click.
+                    Please, type the data to proceed.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form>
-                    <div className="grid w-full items-center gap-4">
-                      <div className="flex flex-col space-y-1.5">
-                        <Label htmlFor="name">Name</Label>
-                        <Input id="name" placeholder="Name of your project" />
-                      </div>
-                      <div className="flex flex-col space-y-1.5">
-                        <Label htmlFor="framework">Framework</Label>
-                        <Select>
-                          <SelectTrigger id="framework">
-                            <SelectValue placeholder="Select" />
-                          </SelectTrigger>
-                          <SelectContent position="popper">
-                            <SelectItem value="next">Next.js</SelectItem>
-                            <SelectItem value="sveltekit">SvelteKit</SelectItem>
-                            <SelectItem value="astro">Astro</SelectItem>
-                            <SelectItem value="nuxt">Nuxt.js</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </form>
+                  <div className="mb-4">
+                    <label htmlFor={`grade`} className="block text-white mb-2">
+                      Grade:
+                    </label>
+                    <Select
+                      onValueChange={(value) => {
+                        console.log("Grade Selected:", value);
+                        setGrade(value);
+                      }}
+                    >
+                      <SelectTrigger id="grade">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent position="popper">
+                        <SelectItem className="cursor-pointer" value="N">
+                          N
+                        </SelectItem>
+                        <SelectItem className="cursor-pointer" value="A">
+                          A
+                        </SelectItem>
+                        <SelectItem className="cursor-pointer" value="B">
+                          B
+                        </SelectItem>
+                        <SelectItem className="cursor-pointer" value="C">
+                          C
+                        </SelectItem>
+                        <SelectItem className="cursor-pointer" value="Z">
+                          Z
+                        </SelectItem>
+                        <SelectItem className="cursor-pointer" value="P">
+                          P
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      htmlFor={`criticalFlag`}
+                      className="block text-white mb-2"
+                    >
+                      Critical Flag:
+                    </label>
+                    <Select
+                      onValueChange={(value) => {
+                        console.log("Grade Selected:", value);
+                        setCriticalFlag(value);
+                      }}
+                    >
+                      <SelectTrigger id="criticalFlag">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent position="popper">
+                        <SelectItem className="cursor-pointer" value="Critical">
+                          Critical
+                        </SelectItem>
+                        <SelectItem
+                          className="cursor-pointer"
+                          value="Not Critical"
+                        >
+                          Not Critical
+                        </SelectItem>
+                        <SelectItem
+                          className="cursor-pointer"
+                          value="Not Applicable"
+                        >
+                          Not Applicable
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      htmlFor={`inspectionDate`}
+                      className="block text-white mb-2"
+                    >
+                      Inspection Date:
+                    </label>
+                    <DatePicker
+                      date={new Date().toISOString()}
+                      setDate
+                      disabled
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      htmlFor={`recordDate`}
+                      className="block text-white mb-2"
+                    >
+                      Record Date:
+                    </label>
+                    <DatePicker
+                      date={new Date().toISOString()}
+                      setDate
+                      disabled
+                    />
+                  </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
                   <AlertDialogCancel className="w-1/2 mr-[1vw]">
@@ -96,9 +176,9 @@ const AddInspectionDialog = ({
                   </AlertDialogCancel>
                   <AlertDialogAction
                     className="w-1/2 ml-[1vw]"
-                    onClick={handleAction}
+                    onClick={() => handleAction(grade, criticalFlag)}
                   >
-                    Continue
+                    Save
                   </AlertDialogAction>
                 </CardFooter>
               </Card>

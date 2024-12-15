@@ -191,6 +191,7 @@ export default function RestaurantsFormUpdate() {
   };
 
   const handleDelete = async () => {
+    console.log([...formData.inspections], "formData");
     const newInspections = [...formData.inspections];
 
     try {
@@ -283,14 +284,10 @@ export default function RestaurantsFormUpdate() {
           <h1 className="bg-black text-white text-center rounded-t-md py-4 mx-auto font-bold text-lg">
             Update Restaurant
           </h1>
-          <div
-            className="p-6 mx-auto flex justify-center items-center min-h-[50vh] rounded-b-md shadow-lg border-l border-b border-gray-300 "
-            style={{ backgroundColor: "#19213B" }}
-          >
+          <div className="p-6 mx-auto flex justify-center items-center min-h-[50vh] rounded-b-md shadow-lg border-l border-b border-gray-300 bg-[#161616]">
             <form
               onSubmit={handleSubmit}
-              className="restaurant-form w-full pt-4 rounded"
-              style={{ backgroundColor: "#27304F" }}
+              className="restaurant-form w-full pt-4 rounded bg-[#202020]"
             >
               <div className="flex w-full overflow-y-auto max-h-[700px] w-1/2 pl-4">
                 <div

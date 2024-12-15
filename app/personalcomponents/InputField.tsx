@@ -25,8 +25,7 @@ const InputField: React.FC<InputFieldProps> = ({
         {label}:
       </label>
       <input
-        className="w-full p-2 text-black rounded"
-        style={{ backgroundColor: "white" }}
+        className="w-full p-2 text-black rounded bg-white"
         type="text"
         id={id}
         name={name}

@@ -15,9 +15,9 @@ import {
 } from "./command";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { useSearchParams } from "@remix-run/react";
-import { ComboboxProps } from "~/interfaces/ComboboxPropsInterface";
+import { IComboboxProps } from "~/interfaces/ComboboxPropsInterface";
 
-export function Comboboxsearch({ frameworks }: ComboboxProps) {
+export function Comboboxsearch({ frameworks }: IComboboxProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState({

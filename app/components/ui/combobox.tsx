@@ -18,7 +18,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 interface ComboboxProps {
   frameworks: { value: string; label: string }[];
   value: string | null;
-  onChange: (value: string, index: number) => void;
+  onChange: (name: string, value: string, index: number) => void;
+  name: string;
   index: number;
 }
 
