@@ -40,7 +40,7 @@ export function Comboboxsearch({ frameworks }: IComboboxProps) {
                 .filter((key) => value[key])
                 .map((key) => frameworks.find((fw) => fw.value === key)?.label)
                 .join(", ")
-            : "Search options"}
+            : "Search by name"}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>

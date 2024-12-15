@@ -8,22 +8,32 @@ import RestaurantTable from "~/personalcomponents/RestaurantTable";
 import RestaurantTablePagination from "~/personalcomponents/RestaurantTablePagination";
 import IconButton from "~/personalcomponents/IconButton";
 import SearchBar from "~/personalcomponents/SearchBar";
+import { toast } from "~/hooks/use-toast";
 
 export async function loader({ request }) {
   const url = new URL(request.url);
   const page = Number(url.searchParams.get("page")) || 1;
   const size = Number(url.searchParams.get("size")) || 20;
+  const name = url.searchParams.get("name") || null;
   const grade = url.searchParams.get("grade") || null;
   const borough = url.searchParams.get("borough") || null;
   const cuisineDescription = url.searchParams.get("cuisineDescription") || null;
   const sortBy = url.searchParams.get("sortBy") || "name";
   const sortDirection = url.searchParams.get("sortDirection") || "asc";
+  let apiUrl;
 
-  const apiUrl = `http://localhost:8080/api/restaurants?page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}${
-    grade ? `&grade=${grade}` : ""
-  }${borough ? `&borough=${borough}` : ""}${
-    cuisineDescription ? `&cuisineDescription=${cuisineDescription}` : ""
-  }`;
+  if (name != null) {
+    apiUrl = `http://localhost:8080/api/restaurants/search?page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}${
+      name ? `&name=${name}` : ""
+    }`;
+  } else {
+    apiUrl = `http://localhost:8080/api/restaurants?page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}${`${
+      grade ? `&grade=${grade}` : ""
+    }${borough ? `&borough=${borough}` : ""}${
+      cuisineDescription ? `&cuisineDescription=${cuisineDescription}` : ""
+    }`}`;
+  }
+
   const response = await fetch(apiUrl);
   if (!response.ok) {
     throw new Response("Failed to fetch restaurants", {
@@ -51,18 +61,32 @@ export default function Restaurants() {
   function handleSearchSubmit(): void {
     const newParams = new URLSearchParams(searchParams);
     const parameters = ["borough", "grade", "cuisineDescription"];
-
     const allParams: { [key: string]: string } = {};
 
-    newParams.forEach((value, key) => {
-      allParams[key] = value;
-    });
+    const hasRelevantParameter = parameters.some((param) =>
+      newParams.has(param)
+    );
 
-    parameters.forEach((param) => {
-      if (newParams.has(param)) {
-        allParams[param] = inputText;
-      }
-    });
+    if (!hasRelevantParameter && inputText.length < 3) {
+      toast.error("Type at least 3 characters.");
+      return;
+    }
+
+    if (!hasRelevantParameter) {
+      allParams["name"] = inputText;
+    } else {
+      newParams.delete("name");
+
+      newParams.forEach((value, key) => {
+        allParams[key] = value;
+      });
+
+      parameters.forEach((param) => {
+        if (newParams.has(param)) {
+          allParams[param] = inputText;
+        }
+      });
+    }
 
     allParams["page"] = "1";
 
@@ -125,6 +149,8 @@ export default function Restaurants() {
             { value: "borough", label: "Borough" },
           ]}
           handleSearchSubmit={handleSearchSubmit}
+          inputText={inputText}
+          setInputText={setInputText}
         />
       </div>
       <div className="w-full rounded-b-md shadow-lg h-[70vh] bg-white">

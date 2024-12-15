@@ -30,16 +30,6 @@ const items = [
     url: "/restaurantsFormCreate",
     icon: Plus,
   },
-  /*{
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },*/
 ];
 
 export function AppSidebar() {

@@ -7,9 +7,9 @@ import { ISearchBarProps } from "~/interfaces/SearchBarInterface";
 const SearchBar: React.FC<ISearchBarProps> = ({
   frameworks,
   handleSearchSubmit,
+  inputText,
+  setInputText,
 }) => {
-  const [inputText, setInputText] = useState<string>("");
-
   return (
     <div className="flex items-center space-x-2 w-2/4 justify-end text-right">
       <Comboboxsearch frameworks={frameworks} />
