@@ -1,29 +1,45 @@
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
+import { Combobox } from "~/components/ui/combobox";
+import { DatePicker } from "~/components/ui/datepicker";
 import { toast } from "~/hooks/use-toast";
+import InputField from "~/personalcomponents/InputField";
+import RestaurantForm from "~/personalcomponents/RestaurantFormCreate";
 
 export default function RestaurantFormCreate() {
   const [formData, setFormData] = useState({
-    name: "",
-    cuisineType: "",
-    street: "",
-    borough: "",
-    zipcode: "",
-    phone: "",
-    currentGrade: "",
-    lastInspectionDate: "",
+    name: null,
+    street: null,
+    borough: null,
+    zipcode: null,
+    phone: null,
+    cuisineDescription: null,
+    currentGrade: "N",
+    lastInspectionDate: new Date().toISOString(),
   });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Verificando se algum campo está nulo ou vazio
+    const fieldsToCheck = [
+      "name",
+      "street",
+      "borough",
+      "zipcode",
+      "phone",
+      "cuisineDescription",
+    ];
+
+    for (let field of fieldsToCheck) {
+      if (!formData[field]) {
+        toast.error(
+          `${field.charAt(0).toUpperCase() + field.slice(1)} is required!`
+        );
+        return; // Impede o envio se algum campo for inválido
+      }
+    }
+
     try {
       const response = await fetch("http://localhost:8080/api/restaurants", {
         method: "POST",
@@ -61,138 +77,7 @@ export default function RestaurantFormCreate() {
           className="restaurant-form w-full p-4 rounded overflow-y-auto max-h-[400px] w-1/2 pl-4 rounded"
           style={{ backgroundColor: "#27304F" }}
         >
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4 ">
-              <label htmlFor="name" className="block text-white mb-2">
-                Name:
-              </label>
-              <input
-                className="w-full p-2 text-black rounded"
-                style={{ backgroundColor: "white" }}
-                type="text"
-                id="name"
-                name="name"
-                placeholder="Restaurant's name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="cuisineType" className="block text-white mb-2">
-                Cuisine Type:
-              </label>
-              <input
-                className="w-full p-2 text-black rounded"
-                style={{ backgroundColor: "white" }}
-                type="text"
-                id="cuisineType"
-                name="cuisineType"
-                placeholder="Restaurant's cuisine type"
-                value={formData.cuisineType}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="street" className="block text-white mb-2">
-                Street:
-              </label>
-              <input
-                className="w-full p-2 text-black rounded"
-                style={{ backgroundColor: "white" }}
-                type="text"
-                id="street"
-                name="street"
-                placeholder="Restaurant's street"
-                value={formData.street}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="borough" className="block text-white mb-2">
-                Borough:
-              </label>
-              <input
-                className="w-full p-2 text-black rounded"
-                style={{ backgroundColor: "white" }}
-                type="text"
-                id="borough"
-                name="borough"
-                placeholder="Restaurant's borough"
-                value={formData.borough}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="zipcode" className="block text-white mb-2">
-                Zipcode:
-              </label>
-              <input
-                className="w-full p-2 text-black rounded"
-                style={{ backgroundColor: "white" }}
-                type="text"
-                id="zipcode"
-                name="zipcode"
-                placeholder="Restaurant's zipcode"
-                value={formData.zipcode}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="phone" className="block text-white mb-2">
-                Phone:
-              </label>
-              <input
-                className="w-full p-2 text-black rounded"
-                style={{ backgroundColor: "white" }}
-                type="text"
-                id="phone"
-                name="phone"
-                placeholder="Restaurant's phone"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="currentGrade" className="block text-white mb-2">
-                Current Grade:
-              </label>
-              <input
-                className="w-full p-2 text-black rounded"
-                style={{ backgroundColor: "white" }}
-                type="text"
-                id="currentGrade"
-                name="currentGrade"
-                placeholder="Restaurant's current grade"
-                value={formData.currentGrade}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="lastInspectionDate"
-                className="block text-white mb-2"
-              >
-                Last Inspection Date:
-              </label>
-              <input
-                className="w-full p-2 text-black rounded"
-                style={{ backgroundColor: "white" }}
-                type="date"
-                id="lastInspectionDate"
-                name="lastInspectionDate"
-                value={formData.lastInspectionDate}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </form>
+          <RestaurantForm formData={formData} setFormData={setFormData} />
         </div>
         <Button
           type="submit"

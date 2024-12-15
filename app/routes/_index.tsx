@@ -21,7 +21,6 @@ export default function Index() {
         >
           Explore
         </Button>
-        <Outlet />
       </div>
     </div>
   );
