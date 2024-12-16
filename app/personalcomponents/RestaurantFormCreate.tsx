@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import InputField from "./InputField";
-import { Combobox } from "../components/ui/combobox"; // Supondo que o Combobox esteja importado de algum lugar
-import { DatePicker } from "../components/ui/datepicker"; // Supondo que o DatePicker esteja importado de algum lugar
+import { Combobox } from "../components/ui/combobox";
+import { DatePicker } from "../components/ui/datepicker";
+import AddInspectionDialog from "./AddInspectionsDialog";
 
 interface FormData {
   name: string;
@@ -13,6 +14,45 @@ interface FormData {
   currentGrade: string | null;
   lastInspectionDate: Date | null;
 }
+
+const fields = [
+  {
+    label: "Name",
+    id: "name",
+    name: "name",
+    placeholder: "Restaurant's name",
+  },
+  {
+    label: "Cuisine Type",
+    id: "cuisineDescription",
+    name: "cuisineDescription",
+    placeholder: "Restaurant's cuisine type",
+  },
+  {
+    label: "Street",
+    id: "street",
+    name: "street",
+    placeholder: "Restaurant's street",
+  },
+  {
+    label: "Borough",
+    id: "borough",
+    name: "borough",
+    placeholder: "Restaurant's borough",
+  },
+  {
+    label: "Zipcode",
+    id: "zipcode",
+    name: "zipcode",
+    placeholder: "Restaurant's zipcode",
+  },
+  {
+    label: "Phone",
+    id: "phone",
+    name: "phone",
+    placeholder: "Restaurant's phone",
+  },
+];
 
 const RestaurantForm: React.FC = ({ formData, setFormData }) => {
   const handleChange = (e) => {
@@ -32,60 +72,18 @@ const RestaurantForm: React.FC = ({ formData, setFormData }) => {
 
   return (
     <form>
-      <InputField
-        label="Name"
-        id="name"
-        name="name"
-        placeholder="Restaurant's name"
-        value={formData.name}
-        onChange={handleChange}
-        required
-      />
-      <InputField
-        label="Cuisine Type"
-        id="cuisineDescription"
-        name="cuisineDescription"
-        placeholder="Restaurant's cuisine type"
-        value={formData.cuisineDescription}
-        onChange={handleChange}
-        required
-      />
-      <InputField
-        label="Street"
-        id="street"
-        name="street"
-        placeholder="Restaurant's street"
-        value={formData.street}
-        onChange={handleChange}
-        required
-      />
-      <InputField
-        label="Borough"
-        id="borough"
-        name="borough"
-        placeholder="Restaurant's borough"
-        value={formData.borough}
-        onChange={handleChange}
-        required
-      />
-      <InputField
-        label="Zipcode"
-        id="zipcode"
-        name="zipcode"
-        placeholder="Restaurant's zipcode"
-        value={formData.zipcode}
-        onChange={handleChange}
-        required
-      />
-      <InputField
-        label="Phone"
-        id="phone"
-        name="phone"
-        placeholder="Restaurant's phone"
-        value={formData.phone}
-        onChange={handleChange}
-        required
-      />
+      {fields.map((field) => (
+        <div className="mb-4" key={field.id}>
+          <InputField
+            label={field.label}
+            id={field.id}
+            name={field.name}
+            placeholder={field.placeholder}
+            value={formData[field.name] ?? ""}
+            onChange={handleChange}
+          />
+        </div>
+      ))}
       <div className="mb-4">
         <label htmlFor="currentGrade" className="block text-white mb-2">
           Current Grade:

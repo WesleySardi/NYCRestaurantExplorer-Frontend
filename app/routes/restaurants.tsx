@@ -1,9 +1,8 @@
 import { Outlet, useLoaderData, useSearchParams } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { useEffect, useState } from "react";
-import { faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faInfo, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "@remix-run/react";
-
 import RestaurantTable from "~/personalcomponents/RestaurantTable";
 import RestaurantTablePagination from "~/personalcomponents/RestaurantTablePagination";
 import IconButton from "~/personalcomponents/IconButton";
@@ -18,16 +17,16 @@ export async function loader({ request }) {
   const grade = url.searchParams.get("grade") || null;
   const borough = url.searchParams.get("borough") || null;
   const cuisineDescription = url.searchParams.get("cuisineDescription") || null;
-  const sortBy = url.searchParams.get("sortBy") || "name";
+  const sortBy = url.searchParams.get("sortby") || "name";
   const sortDirection = url.searchParams.get("sortDirection") || "asc";
   let apiUrl;
 
   if (name != null) {
-    apiUrl = `http://localhost:8080/api/restaurants/search?page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}${
+    apiUrl = `http://localhost:8080/api/restaurants/search?page=${page}&size=${size}&sortby=${sortBy}&sortDirection=${sortDirection}${
       name ? `&name=${name}` : ""
     }`;
   } else {
-    apiUrl = `http://localhost:8080/api/restaurants?page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}${`${
+    apiUrl = `http://localhost:8080/api/restaurants?page=${page}&size=${size}&sortby=${sortBy}&sortDirection=${sortDirection}${`${
       grade ? `&grade=${grade}` : ""
     }${borough ? `&borough=${borough}` : ""}${
       cuisineDescription ? `&cuisineDescription=${cuisineDescription}` : ""
@@ -53,8 +52,10 @@ export default function Restaurants() {
   }: { content: any; totalPages: number; pageable: any } = useLoaderData();
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentLimit, setCurrentLimit] = useState(20);
+  const [currentOrder, setCurrentOrder] = useState("name");
   const [inputText, setInputText] = useState("");
-  const [isEditAllowed, setIsEditAllowed] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
   const [currentItem, setCurrentItem] = useState<number>();
   const navigate = useNavigate();
 
@@ -89,6 +90,8 @@ export default function Restaurants() {
     }
 
     allParams["page"] = "1";
+    allParams["size"] = "20";
+    allParams["sortby"] = "name";
 
     setSearchParams(allParams);
   }
@@ -102,21 +105,43 @@ export default function Restaurants() {
     }
   };
 
+  const handleLimitChange = (newLimit: number) => {
+    const validLimit = Number(newLimit);
+    if (!isNaN(validLimit)) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set("size", validLimit.toString());
+      setSearchParams(newParams);
+    }
+  };
+
+  const handlePageOrder = (order: string) => {
+    if (order) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set("sortby", order);
+      setSearchParams(newParams);
+    }
+  };
+
   const handleRowClick = (restaurantId: number) => {
-    setIsEditAllowed(true);
+    setIsSelected(true);
     setCurrentItem(restaurantId);
   };
 
-  const handleCreateOrEditClick = (create: boolean) => {
-    if (create) {
+  const handleCreateOrEditClick = (type: string) => {
+    console.log(type);
+    if (type === "create") {
       navigate(`/restaurantsFormCreate`);
-    } else {
+    } else if (type === "update") {
       navigate(`/restaurantsFormUpdate/${currentItem}`);
+    } else {
+      navigate(`/restaurantsFormInfo/${currentItem}`);
     }
   };
 
   useEffect(() => {
     const page = searchParams.get("page");
+    const limit = searchParams.get("size");
+    const order = searchParams.get("sortby");
     const newParams = new URLSearchParams(searchParams);
     const updatedParams: { [key: string]: string } = {};
 
@@ -126,6 +151,14 @@ export default function Restaurants() {
 
     if (page) {
       setCurrentPage(Number(page));
+    }
+
+    if (limit) {
+      setCurrentLimit(Number(limit));
+    }
+
+    if (order) {
+      setCurrentOrder(order);
     }
 
     const parameters = ["borough", "grade", "cuisineDescription"];
@@ -157,15 +190,21 @@ export default function Restaurants() {
         <div className="flex h-[60vh]">
           <div className="flex flex-col w-1/12">
             <IconButton
+              icon={faInfo}
+              onClick={() => handleCreateOrEditClick("info")}
+              disabled={!isSelected}
+              className="border-b bg-[#3D4C7D] text-[1.5vw]"
+            />
+            <IconButton
               icon={faPlus}
-              onClick={() => handleCreateOrEditClick(true)}
-              className="border-b bg-[#3D4C7D]"
+              onClick={() => handleCreateOrEditClick("create")}
+              className="border-b bg-[#3D4C7D] text-[1.5vw]"
             />
             <IconButton
               icon={faEdit}
-              onClick={() => handleCreateOrEditClick(false)}
-              disabled={!isEditAllowed}
-              className="bg-[#3D4C7D]"
+              onClick={() => handleCreateOrEditClick("update")}
+              disabled={!isSelected}
+              className="bg-[#3D4C7D] text-[1.5vw]"
             />
           </div>
           <div className="overflow-y-auto w-11/12">
@@ -180,8 +219,12 @@ export default function Restaurants() {
           <div className="w-1/2 flex justify-between items-center px-8">
             <RestaurantTablePagination
               currentPage={currentPage}
+              currentLimit={currentLimit}
+              currentOrder={currentOrder}
               totalPages={totalPages}
               handlePageChange={handlePageChange}
+              handleLimitChange={handleLimitChange}
+              handlePageOrder={handlePageOrder}
             />
           </div>
           <div className="w-1/2 pl-10">

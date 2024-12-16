@@ -23,7 +23,7 @@ const IconButton: React.FC<IconButtonProps> = ({
       }`}
       disabled={disabled}
     >
-      <FontAwesomeIcon icon={icon} size="2x" className="text-black-500" />
+      <FontAwesomeIcon icon={icon} size="1x" className="text-black-500" />
     </button>
   );
 };

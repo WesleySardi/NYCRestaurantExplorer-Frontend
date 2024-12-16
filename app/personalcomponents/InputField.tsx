@@ -8,6 +8,7 @@ interface InputFieldProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
+  type: string;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -18,6 +19,7 @@ const InputField: React.FC<InputFieldProps> = ({
   value,
   onChange,
   required = false,
+  type = "text",
 }) => {
   return (
     <div className="mb-4">
@@ -26,13 +28,14 @@ const InputField: React.FC<InputFieldProps> = ({
       </label>
       <input
         className="w-full p-2 text-black rounded bg-white"
-        type="text"
+        type={type}
         id={id}
         name={name}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
         required={required}
+        maxLength={20}
       />
     </div>
   );

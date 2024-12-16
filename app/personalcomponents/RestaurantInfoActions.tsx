@@ -1,11 +1,16 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChartSimple,
+  faPlus,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { Button } from "~/components/ui/button";
 import AddInspectionDialog from "./AddInspectionsDialog";
 import { useState } from "react";
 
-const InspectionActions = ({
+const RestaurantInfoActions = ({
   selectedIds,
+  formData = null,
   setFormData,
   setIsNewItemAdded,
   handleDeleteInspection,
@@ -46,11 +51,11 @@ const InspectionActions = ({
               disabled={selectedIds.length > 0}
             >
               <FontAwesomeIcon
-                icon={faPlus}
+                icon={faChartSimple}
                 size="1x"
                 className="text-black-500"
               />{" "}
-              Add Inspections
+              Show Metrics
             </Button>
           }
           title={"Are you absolutely sure?"}
@@ -58,54 +63,14 @@ const InspectionActions = ({
             "This action cannot be undone. This will permanently delete your account and remove your data from our servers."
           }
           handleAction={handleAddInspection}
-          type="add"
+          type="metrics"
           setGrade={setGrade}
           setCriticalFlag={setCriticalFlag}
-        />
-        <AddInspectionDialog
-          trigger={
-            <Button
-              className="w-1/3 ml-4 p-8 text-white rounded bg-red-800 hover:bg-gray-700"
-              disabled={selectedIds.length === 0}
-            >
-              <FontAwesomeIcon
-                icon={faTrash}
-                size="1x"
-                className="text-black-500"
-              />{" "}
-              Delete Inspections
-            </Button>
-          }
-          title={"Are you absolutely sure?"}
-          content={
-            "This action cannot be undone. This will permanently delete the inspection and remove the data from our servers."
-          }
-          handleAction={handleDeleteInspection}
-          type="message"
-        />
-      </div>
-      <div className="mt-auto">
-        <AddInspectionDialog
-          trigger={
-            <Button className="w-1/3 ml-4 p-8 text-white rounded bg-red-800 hover:bg-gray-700">
-              <FontAwesomeIcon
-                icon={faTrash}
-                size="1x"
-                className="text-black-500"
-              />{" "}
-              Delete Restaurant
-            </Button>
-          }
-          title={"Are you absolutely sure?"}
-          content={
-            "This action cannot be undone. This will permanently delete the restaurant and remove the data from our servers."
-          }
-          handleAction={handleDeleteRestaurant}
-          type="message"
+          formData={formData}
         />
       </div>
     </div>
   );
 };
 
-export default InspectionActions;
+export default RestaurantInfoActions;

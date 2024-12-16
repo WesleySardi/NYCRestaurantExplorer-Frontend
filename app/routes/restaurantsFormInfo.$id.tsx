@@ -7,6 +7,7 @@ import InputField from "~/personalcomponents/InputField";
 import InspectionActions from "~/personalcomponents/InspectionActions";
 import InspectionsList from "~/personalcomponents/InspectionList";
 import AddInspectionDialog from "~/personalcomponents/AddInspectionsDialog";
+import RestaurantInfoActions from "~/personalcomponents/RestaurantInfoActions";
 
 const fields = [
   {
@@ -371,25 +372,13 @@ export default function RestaurantsFormUpdate() {
                   <></>
                 )}
               </div>
-              <AddInspectionDialog
-                trigger={
-                  <Button className="w-full py-2 text-white rounded bg-green-800 hover:bg-gray-700">
-                    Save
-                  </Button>
-                }
-                title={"Are you absolutely sure?"}
-                content={
-                  "This will update a restaurant and its inspections in the list."
-                }
-                handleAction={handleSubmit}
-                type="message"
-              />
             </form>
           </div>
         </div>
       </div>
-      <InspectionActions
+      <RestaurantInfoActions
         selectedIds={selectedIds}
+        formData={formData}
         setFormData={setFormData}
         setIsNewItemAdded={setIsNewItemAdded}
         handleDeleteInspection={handleDeleteInspection}

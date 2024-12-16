@@ -1,12 +1,12 @@
+import { useNavigate } from "@remix-run/react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import { Combobox } from "~/components/ui/combobox";
-import { DatePicker } from "~/components/ui/datepicker";
 import { toast } from "~/hooks/use-toast";
-import InputField from "~/personalcomponents/InputField";
+import AddInspectionDialog from "~/personalcomponents/AddInspectionsDialog";
 import RestaurantForm from "~/personalcomponents/RestaurantFormCreate";
 
 export default function RestaurantFormCreate() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: null,
     street: null,
@@ -18,10 +18,7 @@ export default function RestaurantFormCreate() {
     lastInspectionDate: new Date().toISOString(),
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Verificando se algum campo está nulo ou vazio
+  const handleSubmit = async () => {
     const fieldsToCheck = [
       "name",
       "street",
@@ -36,7 +33,7 @@ export default function RestaurantFormCreate() {
         toast.error(
           `${field.charAt(0).toUpperCase() + field.slice(1)} is required!`
         );
-        return; // Impede o envio se algum campo for inválido
+        return;
       }
     }
 
@@ -55,6 +52,8 @@ export default function RestaurantFormCreate() {
 
       if (response.ok) {
         toast.success("Restaurant added successfully!");
+
+        navigate(`/restaurants`);
       } else {
         const errorText = await response.text();
         toast.error(`Failed to add restaurant: ${errorText}`);
@@ -74,13 +73,20 @@ export default function RestaurantFormCreate() {
           <RestaurantForm formData={formData} setFormData={setFormData} />
         </div>
         <div className="pt-[2vh] h-[10vh] ">
-          <Button
-            type="submit"
-            onClick={handleSubmit}
-            className="w-full text-white rounded bg-green-800 hover:bg-gray-700 h-[6vh]"
-          >
-            Submit
-          </Button>
+          <AddInspectionDialog
+            trigger={
+              <Button
+                type="submit"
+                className="w-full text-white rounded bg-green-800 hover:bg-gray-700 h-[6vh]"
+              >
+                Submit
+              </Button>
+            }
+            title={"Are you absolutely sure?"}
+            content={"This will add a new restaurant to the list."}
+            handleAction={handleSubmit}
+            type="message"
+          />
         </div>
       </div>
     </div>

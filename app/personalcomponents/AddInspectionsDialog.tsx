@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -27,6 +26,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "~/components/ui/carousel";
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "~/components/ui/chart";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+
+const chartConfig = {
+  countGrade: {
+    label: "Grade",
+    color: "#FD9E0F",
+  },
+  countCriticalFlag: {
+    label: "Critical Flag",
+    color: "#4800BB",
+  },
+} satisfies ChartConfig;
 
 const AddInspectionDialog = ({
   trigger = null,
@@ -36,15 +62,30 @@ const AddInspectionDialog = ({
   handleAction,
   setGrade = null,
   setCriticalFlag = null,
+  formData = null,
 }) => {
-  const handleChangeComboBox = (name: string, value: string, index: number) => {
-    if (name === "grade") return setGrade(value);
-    if (name === "criticalFlag") return setCriticalFlag(value);
-  };
+  const grades = ["N", "A", "B", "C", "Z", "P"];
+  const criticalFlags = ["Critical", "Not Critical", "Not Applicable"];
+
+  const chartData1 = grades.map((grade) => ({
+    grade,
+    countGrade: formData.inspections
+      .filter((inspection) => inspection.grade === grade)
+      .reduce((acc) => acc + 1, 0),
+  }));
+
+  const chartData2 = criticalFlags.map((flag) => ({
+    criticalFlag: flag,
+    countCriticalFlag: formData.inspections
+      .filter((inspection) => inspection.criticalFlag === flag)
+      .reduce((acc) => acc + 1, 0),
+  }));
+
+  console.log(chartData2, "chartData2");
 
   return (
     <>
-      {type === "delete" ? (
+      {type === "message" ? (
         <AlertDialog>
           <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
           <AlertDialogContent>
@@ -79,7 +120,6 @@ const AddInspectionDialog = ({
                     </label>
                     <Select
                       onValueChange={(value) => {
-                        console.log("Grade Selected:", value);
                         setGrade(value);
                       }}
                     >
@@ -180,6 +220,94 @@ const AddInspectionDialog = ({
                   >
                     Save
                   </AlertDialogAction>
+                </CardFooter>
+              </Card>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
+      ) : type === "metrics" ? (
+        <>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+            <AlertDialogContent>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Data analysis</CardTitle>
+                  <CardDescription>
+                    Here you can see the restaurant's performance.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Carousel>
+                    <CarouselContent>
+                      <CarouselItem>
+                        <ChartContainer config={chartConfig}>
+                          <BarChart accessibilityLayer data={chartData1}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis
+                              dataKey="grade"
+                              tickLine={false}
+                              tickMargin={10}
+                              axisLine={false}
+                              tickFormatter={(value) => value.slice(0, 3)}
+                            />
+                            <ChartTooltip
+                              content={
+                                <ChartTooltipContent
+                                  labelKey="countGrade"
+                                  nameKey="countGrade"
+                                />
+                              }
+                            />
+                            <ChartLegend content={<ChartLegendContent />} />
+                            <Bar
+                              dataKey="countGrade"
+                              fill="var(--color-countGrade)"
+                              radius={4}
+                            />
+                          </BarChart>
+                        </ChartContainer>
+                      </CarouselItem>
+                      <CarouselItem>
+                        <ChartContainer
+                          config={chartConfig}
+                          className="min-h-[200px] w-full"
+                        >
+                          <BarChart accessibilityLayer data={chartData2}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis
+                              dataKey="criticalFlag"
+                              tickLine={false}
+                              tickMargin={10}
+                              axisLine={false}
+                              tickFormatter={(value) => value.slice(0, 15)}
+                            />
+                            <ChartTooltip
+                              content={
+                                <ChartTooltipContent
+                                  labelKey="countCriticalFlag"
+                                  nameKey="countCriticalFlag"
+                                />
+                              }
+                            />
+                            <ChartLegend content={<ChartLegendContent />} />
+                            <Bar
+                              dataKey="countCriticalFlag"
+                              fill="var(--color-countCriticalFlag)"
+                              radius={4}
+                            />
+                          </BarChart>
+                        </ChartContainer>
+                      </CarouselItem>
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                  </Carousel>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <AlertDialogCancel className="w-full mr-[1vw]">
+                    Return
+                  </AlertDialogCancel>
                 </CardFooter>
               </Card>
             </AlertDialogContent>
