@@ -17,7 +17,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Combobox } from "~/components/ui/combobox";
 import { DatePicker } from "~/components/ui/datepicker";
 import {
   Select,
@@ -42,6 +41,7 @@ import {
   type ChartConfig,
 } from "~/components/ui/chart";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { IAddInspectionDialog } from "~/interfaces/AddInspectionDialogInterface";
 
 const chartConfig = {
   countGrade: {
@@ -63,25 +63,29 @@ const AddInspectionDialog = ({
   setGrade = null,
   setCriticalFlag = null,
   formData = null,
-}) => {
-  const grades = ["N", "A", "B", "C", "Z", "P"];
-  const criticalFlags = ["Critical", "Not Critical", "Not Applicable"];
+}): IAddInspectionDialog => {
+  const grades: string[] = ["N", "A", "B", "C", "Z", "P"];
+  const criticalFlags: string[] = [
+    "Critical",
+    "Not Critical",
+    "Not Applicable",
+  ];
 
-  const chartData1 = grades.map((grade) => ({
-    grade,
-    countGrade: formData.inspections
-      .filter((inspection) => inspection.grade === grade)
-      .reduce((acc) => acc + 1, 0),
-  }));
+  const chartData1: { grade: string; countGrade: number }[] = grades?.map(
+    (grade: string) => ({
+      grade,
+      countGrade: formData?.inspections
+        .filter((inspection: IInspection) => inspection.grade === grade)
+        .reduce((acc: number) => acc + 1, 0),
+    })
+  );
 
-  const chartData2 = criticalFlags.map((flag) => ({
+  const chartData2 = criticalFlags?.map((flag: string) => ({
     criticalFlag: flag,
-    countCriticalFlag: formData.inspections
-      .filter((inspection) => inspection.criticalFlag === flag)
-      .reduce((acc) => acc + 1, 0),
+    countCriticalFlag: formData?.inspections
+      .filter((inspection: IInspection) => inspection.criticalFlag === flag)
+      .reduce((acc: number) => acc + 1, 0),
   }));
-
-  console.log(chartData2, "chartData2");
 
   return (
     <>
@@ -119,7 +123,7 @@ const AddInspectionDialog = ({
                       Grade:
                     </label>
                     <Select
-                      onValueChange={(value) => {
+                      onValueChange={(value: string) => {
                         setGrade(value);
                       }}
                     >
@@ -156,8 +160,7 @@ const AddInspectionDialog = ({
                       Critical Flag:
                     </label>
                     <Select
-                      onValueChange={(value) => {
-                        console.log("Grade Selected:", value);
+                      onValueChange={(value: string) => {
                         setCriticalFlag(value);
                       }}
                     >
@@ -216,7 +219,7 @@ const AddInspectionDialog = ({
                   </AlertDialogCancel>
                   <AlertDialogAction
                     className="w-1/2 ml-[1vw]"
-                    onClick={() => handleAction(grade, criticalFlag)}
+                    onClick={(): void => handleAction(grade, criticalFlag)}
                   >
                     Save
                   </AlertDialogAction>
@@ -249,7 +252,9 @@ const AddInspectionDialog = ({
                               tickLine={false}
                               tickMargin={10}
                               axisLine={false}
-                              tickFormatter={(value) => value.slice(0, 3)}
+                              tickFormatter={(value: string) =>
+                                value.slice(0, 3)
+                              }
                             />
                             <ChartTooltip
                               content={
@@ -280,7 +285,9 @@ const AddInspectionDialog = ({
                               tickLine={false}
                               tickMargin={10}
                               axisLine={false}
-                              tickFormatter={(value) => value.slice(0, 15)}
+                              tickFormatter={(value: string) =>
+                                value.slice(0, 15)
+                              }
                             />
                             <ChartTooltip
                               content={

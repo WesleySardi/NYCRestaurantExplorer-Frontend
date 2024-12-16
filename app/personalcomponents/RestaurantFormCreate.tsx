@@ -1,19 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import InputField from "./InputField";
 import { Combobox } from "../components/ui/combobox";
 import { DatePicker } from "../components/ui/datepicker";
-import AddInspectionDialog from "./AddInspectionsDialog";
-
-interface FormData {
-  name: string;
-  cuisineDescription: string;
-  street: string;
-  borough: string;
-  zipcode: string;
-  phone: string;
-  currentGrade: string | null;
-  lastInspectionDate: Date | null;
-}
+import { IInputField } from "~/interfaces/InputFieldsInterface";
 
 const fields = [
   {
@@ -54,17 +43,23 @@ const fields = [
   },
 ];
 
-const RestaurantForm: React.FC = ({ formData, setFormData }) => {
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
+const RestaurantForm = ({
+  formData,
+  setFormData,
+}: {
+  formData: IRestaurant;
+  setFormData: React.Dispatch<React.SetStateAction<IRestaurant>>;
+}) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value }: { name: string; value: string } = e.target;
+    setFormData((prevData: IRestaurant) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
-  const handleChangeComboBox = (name, value) => {
-    setFormData((prevData) => ({
+  const handleChangeComboBox = (name: string, value: string) => {
+    setFormData((prevData: IRestaurant) => ({
       ...prevData,
       [name]: value,
     }));
@@ -72,7 +67,7 @@ const RestaurantForm: React.FC = ({ formData, setFormData }) => {
 
   return (
     <form>
-      {fields.map((field) => (
+      {fields.map((field: IInputField) => (
         <div className="mb-4" key={field.id}>
           <InputField
             label={field.label}

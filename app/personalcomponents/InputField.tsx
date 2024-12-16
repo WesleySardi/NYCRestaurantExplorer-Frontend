@@ -1,17 +1,7 @@
 import React from "react";
+import { InputFieldProps } from "~/interfaces/InputFieldPropsInterface";
 
-interface InputFieldProps {
-  label: string;
-  id: string;
-  name: string;
-  placeholder: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  required?: boolean;
-  type: string;
-}
-
-const InputField: React.FC<InputFieldProps> = ({
+const InputField = ({
   label,
   id,
   name,
@@ -19,8 +9,9 @@ const InputField: React.FC<InputFieldProps> = ({
   value,
   onChange,
   required = false,
+  disabled = false,
   type = "text",
-}) => {
+}: InputFieldProps) => {
   return (
     <div className="mb-4">
       <label htmlFor={id} className="block text-white mb-2">
@@ -36,6 +27,7 @@ const InputField: React.FC<InputFieldProps> = ({
         onChange={onChange}
         required={required}
         maxLength={20}
+        disabled={disabled}
       />
     </div>
   );

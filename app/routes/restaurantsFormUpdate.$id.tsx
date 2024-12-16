@@ -7,6 +7,8 @@ import InputField from "~/personalcomponents/InputField";
 import InspectionActions from "~/personalcomponents/InspectionActions";
 import InspectionsList from "~/personalcomponents/InspectionList";
 import AddInspectionDialog from "~/personalcomponents/AddInspectionsDialog";
+import { IRestaurantTableProps } from "~/interfaces/RestaurantTableProps";
+import { IInspection, IRestaurant } from "~/interfaces/FormDataInterface";
 
 const fields = [
   {
@@ -63,21 +65,22 @@ export async function loader({ params }) {
 }
 
 export default function RestaurantsFormUpdate() {
-  const { restaurant } = useLoaderData();
-  const newItemRef = useRef(null);
+  const { restaurant } = useLoaderData<any>();
+  const newItemRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const [isNewItemAdded, setIsNewItemAdded] = useState(false);
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [date, setDate] = React.useState<Date>();
-  const [initialFormData, setInitialFormData] = useState({});
-  const [formData, setFormData] = useState({
+  const [isNewItemAdded, setIsNewItemAdded] = useState<boolean>(false);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [initialFormData, setInitialFormData] = useState<IRestaurant | null>(
+    null
+  );
+  const [formData, setFormData] = useState<IRestaurant>({
     name: restaurant?.name,
     street: restaurant?.street,
     borough: restaurant?.borough,
     zipcode: restaurant?.zipcode,
     phone: restaurant?.phone,
     cuisineDescription: restaurant?.cuisineDescription,
-    inspections: restaurant?.inspections.map((inspection) => ({
+    inspections: restaurant?.inspections.map((inspection: IInspection) => ({
       id: inspection?.id,
       grade: inspection?.grade,
       criticalFlag: inspection?.criticalFlag,
@@ -87,44 +90,47 @@ export default function RestaurantsFormUpdate() {
   });
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    const date: Date = new Date(dateString);
 
-    const formattedDate = date.toISOString().split("T")[0];
+    const formattedDate: string = date.toISOString().split("T")[0];
 
     return formattedDate;
   };
 
-  const handleCardClick = (e, id: number) => {
+  const handleCardClick = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    id: number
+  ) => {
     e.preventDefault();
 
-    setSelectedIds((prevSelectedIds) =>
+    setSelectedIds((prevSelectedIds: number[]) =>
       prevSelectedIds.includes(id)
-        ? prevSelectedIds.filter((selectedId) => selectedId !== id)
+        ? prevSelectedIds.filter((selectedId: number) => selectedId !== id)
         : [...prevSelectedIds, id]
     );
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     let formattedValue = value;
 
-    setFormData((prevData) => ({
+    setFormData((prevData: IRestaurant) => ({
       ...prevData,
       [name]: formattedValue,
     }));
   };
 
-  const handleChangeComboBox = (name, value, index) => {
-    let formattedValue = value;
+  const handleChangeComboBox = (name: string, value: string, index: number) => {
+    let formattedValue: string = value;
 
     if (name === "date" && value) {
       formattedValue = formatDate(value);
     }
 
-    const newInspections = [...formData.inspections];
-    const inspection = newInspections[index];
+    const newInspections: IInspection[] = [...formData.inspections];
+    const inspection: IInspection = newInspections[index];
 
-    const initialInspection = initialFormData[inspection.id];
+    const initialInspection: IInspection = initialFormData[inspection.id];
 
     if (formattedValue) {
       newInspections[index] = {
@@ -144,30 +150,34 @@ export default function RestaurantsFormUpdate() {
         };
       }
 
-      setFormData((prevData) => ({
+      setFormData((prevData: IRestaurant) => ({
         ...prevData,
         inspections: newInspections,
       }));
     }
   };
 
-  const handleDatePickerChange = (value, index, fieldName) => {
-    const newInspections = [...formData.inspections];
+  const handleDatePickerChange = (
+    value: string,
+    index: number,
+    fieldName: string
+  ) => {
+    const newInspections: IInspection[] = [...formData.inspections];
     newInspections[index] = {
       ...newInspections[index],
       [fieldName]: value,
     };
 
-    setFormData((prevData) => ({
+    setFormData((prevData: IRestaurant) => ({
       ...prevData,
       inspections: newInspections,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const fieldsToCheck = [
+    const fieldsToCheck: string[] = [
       "name",
       "street",
       "borough",
@@ -186,7 +196,7 @@ export default function RestaurantsFormUpdate() {
     }
 
     try {
-      const response = await fetch(
+      const response: Response = await fetch(
         `http://localhost:8080/api/restaurants/${restaurant.camis}`,
         {
           method: "PUT",
@@ -206,22 +216,25 @@ export default function RestaurantsFormUpdate() {
         const errorText = await response.text();
         toast.error(`Failed to update restaurant: ${errorText}`);
       }
-    } catch (error) {
-      toast.error(`An error occurred: ${error.message}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`An error occurred: ${error.message}`);
+      } else {
+        toast.error("An unknown error occurred");
+      }
     }
   };
 
   const handleDeleteInspection = async () => {
-    console.log([...formData.inspections], "formData");
-    const newInspections = [...formData.inspections];
+    const newInspections: IInspection[] = [...formData.inspections];
 
     try {
       for (const index of selectedIds) {
-        const inspection = formData.inspections[index];
+        const inspection: IInspection = formData.inspections[index];
 
         if (inspection) {
           if (inspection.id !== null) {
-            const response = await fetch(
+            const response: Response = await fetch(
               `http://localhost:8080/api/inspections/${inspection.id}`,
               {
                 method: "DELETE",
@@ -238,9 +251,11 @@ export default function RestaurantsFormUpdate() {
               );
               newInspections.splice(index, 1);
 
-              setSelectedIds((prevSelectedIds) =>
+              setSelectedIds((prevSelectedIds: number[]) =>
                 prevSelectedIds.includes(index)
-                  ? prevSelectedIds.filter((selectedId) => selectedId !== index)
+                  ? prevSelectedIds.filter(
+                      (selectedId: number) => selectedId !== index
+                    )
                   : [...prevSelectedIds, index]
               );
 
@@ -251,7 +266,7 @@ export default function RestaurantsFormUpdate() {
 
               navigate(`/restaurantsFormUpdate/${restaurant.camis}`);
             } else {
-              const errorText = await response.text();
+              const errorText: string = await response.text();
               toast.error(
                 `Failed to delete inspection with id ${inspection.id}: ${errorText}`
               );
@@ -261,9 +276,11 @@ export default function RestaurantsFormUpdate() {
 
             newInspections.splice(index, 1);
 
-            setSelectedIds((prevSelectedIds) =>
+            setSelectedIds((prevSelectedIds: number[]) =>
               prevSelectedIds.includes(index)
-                ? prevSelectedIds.filter((selectedId) => selectedId !== index)
+                ? prevSelectedIds.filter(
+                    (selectedId: number) => selectedId !== index
+                  )
                 : [...prevSelectedIds, index]
             );
 
@@ -274,15 +291,19 @@ export default function RestaurantsFormUpdate() {
           }
         }
       }
-    } catch (error) {
-      toast.error(`An error occurred: ${error.message}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`An error occurred: ${error.message}`);
+      } else {
+        toast.error("An unknown error occurred");
+      }
     }
   };
 
   const handleDeleteRestaurant = async () => {
     try {
       if (restaurant) {
-        const response = await fetch(
+        const response: Response = await fetch(
           `http://localhost:8080/api/restaurants/${restaurant.camis}`,
           {
             method: "DELETE",
@@ -303,8 +324,12 @@ export default function RestaurantsFormUpdate() {
           );
         }
       }
-    } catch (error) {
-      toast.error(`An error occurred: ${error.message}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`An error occurred: ${error.message}`);
+      } else {
+        toast.error("An unknown error occurred");
+      }
     }
   };
 
@@ -317,8 +342,8 @@ export default function RestaurantsFormUpdate() {
   }, [isNewItemAdded, formData.inspections]);
 
   useEffect(() => {
-    const initialData = {};
-    formData.inspections.forEach((inspection) => {
+    const initialData: { [key: number]: IInspection } = {};
+    formData.inspections.forEach((inspection: IInspection) => {
       initialData[inspection.id] = {
         ...inspection,
       };
@@ -334,15 +359,15 @@ export default function RestaurantsFormUpdate() {
           <h1 className="bg-black text-white text-center rounded-t-md py-4 mx-auto font-bold text-lg">
             Update Restaurant
           </h1>
-          <div className="p-6 mx-auto flex justify-center items-center min-h-[50vh] rounded-b-md shadow-lg border-l border-b border-gray-300 bg-[#161616]">
+          <div className="h-[70vh] mx-auto flex justify-center items-center rounded-b-md shadow-lg border-l border-b border-gray-300 bg-[#161616]">
             <form
               onSubmit={handleSubmit}
-              className="restaurant-form w-full pt-4 rounded bg-[#202020]"
+              className="restaurant-form w-full rounded bg-[#202020]"
             >
-              <div className="flex w-full overflow-y-auto max-h-[700px] w-1/2 pl-4">
+              <div className="flex w-full overflow-y-auto w-1/2 h-[65vh] px-[1vw]">
                 <div
-                  className={`${
-                    formData.inspections.length > 0 ? "w-1/2" : "w-2/3 m-auto"
+                  className={`pl-5 pt-5 ${
+                    formData.inspections.length > 0 ? "w-1/2" : "w-2/3"
                   } pr-6`}
                 >
                   {fields.map((field) => (
@@ -371,19 +396,21 @@ export default function RestaurantsFormUpdate() {
                   <></>
                 )}
               </div>
-              <AddInspectionDialog
-                trigger={
-                  <Button className="w-full py-2 text-white rounded bg-green-800 hover:bg-gray-700">
-                    Save
-                  </Button>
-                }
-                title={"Are you absolutely sure?"}
-                content={
-                  "This will update a restaurant and its inspections in the list."
-                }
-                handleAction={handleSubmit}
-                type="message"
-              />
+              <div className="h-[5vh]">
+                <AddInspectionDialog
+                  trigger={
+                    <Button className="h-full w-full text-white rounded bg-green-800 hover:bg-gray-700">
+                      Save
+                    </Button>
+                  }
+                  title={"Are you absolutely sure?"}
+                  content={
+                    "This will update a restaurant and its inspections in the list."
+                  }
+                  handleAction={handleSubmit}
+                  type="message"
+                />
+              </div>
             </form>
           </div>
         </div>

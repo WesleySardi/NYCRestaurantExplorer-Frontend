@@ -1,19 +1,12 @@
-import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IIconButtonProps } from "~/interfaces/IconButtonInterface";
 
-interface IconButtonProps {
-  icon: any;
-  onClick: () => void;
-  className?: string;
-  disabled?: boolean;
-}
-
-const IconButton: React.FC<IconButtonProps> = ({
+const IconButton = ({
   icon,
   onClick,
   className,
   disabled,
-}) => {
+}: IIconButtonProps) => {
   return (
     <button
       type="submit"

@@ -14,14 +14,7 @@ import {
   CommandList,
 } from "./command";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
-
-interface ComboboxProps {
-  frameworks: { value: string; label: string }[];
-  value: string | null;
-  onChange: (name: string, value: string, index: number) => void;
-  name: string;
-  index: number;
-}
+import { IComboboxProps } from "~/interfaces/ComboboxPropsInterface";
 
 export function Combobox({
   frameworks,
@@ -29,7 +22,8 @@ export function Combobox({
   onChange,
   name,
   index,
-}: ComboboxProps) {
+  disabled = false,
+}: IComboboxProps) {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -40,6 +34,7 @@ export function Combobox({
           role="combobox"
           aria-expanded={open}
           className="w-full justify-between hover:bg-white-700 bg-white text-black"
+          disabled={disabled}
         >
           {value ?? "Select an option"}
           <ChevronsUpDown className="opacity-50" />

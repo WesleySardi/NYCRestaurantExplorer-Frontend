@@ -1,4 +1,4 @@
-import { IRestaurant } from "./RestaurantInterface";
+import { IRestaurant } from "./FormDataInterface";
 
 export interface IRestaurantTableProps {
   content: IRestaurant[];

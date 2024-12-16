@@ -7,7 +7,7 @@ import RestaurantForm from "~/personalcomponents/RestaurantFormCreate";
 
 export default function RestaurantFormCreate() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<IRestaurantCreate>({
     name: null,
     street: null,
     borough: null,
@@ -19,7 +19,7 @@ export default function RestaurantFormCreate() {
   });
 
   const handleSubmit = async () => {
-    const fieldsToCheck = [
+    const fieldsToCheck: (keyof IRestaurantCreate)[] = [
       "name",
       "street",
       "borough",
@@ -38,17 +38,20 @@ export default function RestaurantFormCreate() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/restaurants", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "*/*",
-        },
-        body: JSON.stringify({
-          ...formData,
-          lastInspectionDate: formData.lastInspectionDate,
-        }),
-      });
+      const response: Response = await fetch(
+        "http://localhost:8080/api/restaurants",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "*/*",
+          },
+          body: JSON.stringify({
+            ...formData,
+            lastInspectionDate: formData.lastInspectionDate,
+          }),
+        }
+      );
 
       if (response.ok) {
         toast.success("Restaurant added successfully!");
@@ -58,8 +61,12 @@ export default function RestaurantFormCreate() {
         const errorText = await response.text();
         toast.error(`Failed to add restaurant: ${errorText}`);
       }
-    } catch (error) {
-      toast.error(`An error occurred: ${error.message}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`An error occurred: ${error.message}`);
+      } else {
+        toast.error("An unknown error occurred");
+      }
     }
   };
 

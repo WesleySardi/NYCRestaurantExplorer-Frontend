@@ -68,7 +68,7 @@ export default function Restaurants() {
       newParams.has(param)
     );
 
-    if (!hasRelevantParameter && inputText.length < 3) {
+    if (!hasRelevantParameter && inputText.length > 0 && inputText.length < 3) {
       toast.error("Type at least 3 characters.");
       return;
     }

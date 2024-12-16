@@ -11,10 +11,11 @@ const InspectionsList = ({
   handleCardClick,
   handleChangeComboBox,
   handleDatePickerChange,
-}) => {
+  isEditable = true,
+}: IInspectionsListProps) => {
   return (
     <div className="w-1/2">
-      {inspections.map((inspection, index) => (
+      {inspections.map((inspection: IInspection, index: number) => (
         <div
           key={index}
           className={`rounded mb-3 p-4 ${
@@ -22,28 +23,31 @@ const InspectionsList = ({
           }`}
           ref={index === inspections.length - 1 ? newItemRef : null}
         >
-          {/* Header */}
           <div className="flex justify-between text-white mb-2 border-b pb-3 font-bold">
             <h1>Inspections {index + 1}</h1>
-            <Button
-              className={`cursor-pointer px-5 ${
-                selectedIds.includes(index) ? "bg-black" : "bg-[#820202]"
-              } ${
-                selectedIds.includes(index)
-                  ? "hover:bg-gray-700"
-                  : "hover:bg-black"
-              }`}
-              onClick={(e) => handleCardClick(e, index)}
-            >
-              <FontAwesomeIcon
-                icon={faXmark}
-                size="1x"
-                className="text-black-500"
-              />
-            </Button>
+            {isEditable ? (
+              <Button
+                className={`cursor-pointer px-5 ${
+                  selectedIds.includes(index) ? "bg-black" : "bg-[#820202]"
+                } ${
+                  selectedIds.includes(index)
+                    ? "hover:bg-gray-700"
+                    : "hover:bg-black"
+                }`}
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                  handleCardClick(e, index)
+                }
+              >
+                <FontAwesomeIcon
+                  icon={faXmark}
+                  size="1x"
+                  className="text-black-500"
+                />
+              </Button>
+            ) : (
+              <></>
+            )}
           </div>
-
-          {/* Grade */}
           <div className="mb-4">
             <label htmlFor={`grade-${index}`} className="block text-white mb-2">
               Grade:
@@ -61,10 +65,9 @@ const InspectionsList = ({
               onChange={handleChangeComboBox}
               name="grade"
               index={index}
+              disabled={!isEditable}
             />
           </div>
-
-          {/* Critical Flag */}
           <div className="mb-4">
             <label
               htmlFor={`criticalFlag-${index}`}
@@ -82,10 +85,9 @@ const InspectionsList = ({
               onChange={handleChangeComboBox}
               name="criticalFlag"
               index={index}
+              disabled={!isEditable}
             />
           </div>
-
-          {/* Inspection Date */}
           <div className="mb-4">
             <label
               htmlFor={`inspectionDate-${index}`}
@@ -95,14 +97,12 @@ const InspectionsList = ({
             </label>
             <DatePicker
               date={inspection.inspectionDate ?? new Date().toISOString()}
-              setDate={(value) =>
+              setDate={(value: string) =>
                 handleDatePickerChange(value, index, "inspectionDate")
               }
               disabled
             />
           </div>
-
-          {/* Record Date */}
           <div className="mb-4">
             <label
               htmlFor={`recordDate-${index}`}
@@ -112,7 +112,7 @@ const InspectionsList = ({
             </label>
             <DatePicker
               date={inspection.recordDate ?? new Date().toISOString()}
-              setDate={(value) =>
+              setDate={(value: string) =>
                 handleDatePickerChange(value, index, "recordDate")
               }
               disabled
