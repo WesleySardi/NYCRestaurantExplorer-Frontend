@@ -44,17 +44,17 @@ const fields = [
   },
 ];
 
-export async function loader({ params }) {
+export async function loader({ params }: { [key: string]: string }) {
   const { id } = params;
-  const apiUrl = `http://localhost:8080/api/restaurants/${id}`;
-  const response = await fetch(apiUrl);
+  const apiUrl: string = `http://localhost:8080/api/restaurants/${id}`;
+  const response: Response = await fetch(apiUrl);
   if (!response.ok) {
     throw new Response("Failed to fetch restaurant details", {
       status: response.status,
     });
   }
 
-  const data = await response.json();
+  const data: Object = await response.json();
 
   return { restaurant: data };
 }
@@ -90,7 +90,7 @@ export default function RestaurantsFormUpdate() {
             <form className="restaurant-form w-full pt-4 pb-4 rounded bg-[#202020] h-full">
               <div className="flex w-full overflow-y-auto w-1/2 pl-4 h-full">
                 <div
-                  className={`${
+                  className={`pl-5 pt-5 ${
                     formData.inspections.length > 0 ? "w-1/2" : "w-2/3 m-auto"
                   } pr-6`}
                 >

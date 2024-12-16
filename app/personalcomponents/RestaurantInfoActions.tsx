@@ -47,7 +47,7 @@ const RestaurantInfoActions = ({
         <AddInspectionDialog
           trigger={
             <Button
-              className="w-1/3 ml-4 mb-4 p-8 text-white rounded bg-blue-800 hover:bg-gray-700"
+              className="w-2/5 ml-4 mb-4 p-8 text-white rounded bg-blue-800 hover:bg-gray-700"
               disabled={selectedIds.length > 0}
             >
               <FontAwesomeIcon

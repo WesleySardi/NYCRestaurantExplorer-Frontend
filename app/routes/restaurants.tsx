@@ -9,17 +9,19 @@ import IconButton from "~/personalcomponents/IconButton";
 import SearchBar from "~/personalcomponents/SearchBar";
 import { toast } from "~/hooks/use-toast";
 
-export async function loader({ request }) {
-  const url = new URL(request.url);
-  const page = Number(url.searchParams.get("page")) || 1;
-  const size = Number(url.searchParams.get("size")) || 20;
-  const name = url.searchParams.get("name") || null;
-  const grade = url.searchParams.get("grade") || null;
-  const borough = url.searchParams.get("borough") || null;
-  const cuisineDescription = url.searchParams.get("cuisineDescription") || null;
-  const sortBy = url.searchParams.get("sortby") || "name";
-  const sortDirection = url.searchParams.get("sortDirection") || "asc";
-  let apiUrl;
+export async function loader({ request }: { [key: string]: string }) {
+  const url: URL = new URL(request.url);
+  const page: number = Number(url.searchParams.get("page")) || 1;
+  const size: number = Number(url.searchParams.get("size")) || 20;
+  const name: string | null = url.searchParams.get("name") || null;
+  const grade: string | null = url.searchParams.get("grade") || null;
+  const borough: string | null = url.searchParams.get("borough") || null;
+  const cuisineDescription: string | null =
+    url.searchParams.get("cuisineDescription") || null;
+  const sortBy: string | null = url.searchParams.get("sortby") || "name";
+  const sortDirection: string | null =
+    url.searchParams.get("sortDirection") || "asc";
+  let apiUrl: string;
 
   if (name != null) {
     apiUrl = `http://localhost:8080/api/restaurants/search?page=${page}&size=${size}&sortby=${sortBy}&sortDirection=${sortDirection}${
@@ -33,13 +35,13 @@ export async function loader({ request }) {
     }`}`;
   }
 
-  const response = await fetch(apiUrl);
+  const response: Response = await fetch(apiUrl);
   if (!response.ok) {
     throw new Response("Failed to fetch restaurants", {
       status: response.status,
     });
   }
-  const data = await response.json();
+  const data: Object = await response.json();
 
   return json(data);
 }
@@ -51,20 +53,20 @@ export default function Restaurants() {
     pageable,
   }: { content: any; totalPages: number; pageable: any } = useLoaderData();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [currentLimit, setCurrentLimit] = useState(20);
-  const [currentOrder, setCurrentOrder] = useState("name");
-  const [inputText, setInputText] = useState("");
-  const [isSelected, setIsSelected] = useState(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentLimit, setCurrentLimit] = useState<number>(20);
+  const [currentOrder, setCurrentOrder] = useState<string>("name");
+  const [inputText, setInputText] = useState<string>("");
+  const [isSelected, setIsSelected] = useState<boolean>(false);
   const [currentItem, setCurrentItem] = useState<number>();
   const navigate = useNavigate();
 
   function handleSearchSubmit(): void {
     const newParams = new URLSearchParams(searchParams);
-    const parameters = ["borough", "grade", "cuisineDescription"];
+    const parameters: string[] = ["borough", "grade", "cuisineDescription"];
     const allParams: { [key: string]: string } = {};
 
-    const hasRelevantParameter = parameters.some((param) =>
+    const hasRelevantParameter: boolean = parameters.some((param: string) =>
       newParams.has(param)
     );
 
@@ -78,11 +80,11 @@ export default function Restaurants() {
     } else {
       newParams.delete("name");
 
-      newParams.forEach((value, key) => {
+      newParams.forEach((value: string, key: string) => {
         allParams[key] = value;
       });
 
-      parameters.forEach((param) => {
+      parameters.forEach((param: string) => {
         if (newParams.has(param)) {
           allParams[param] = inputText;
         }
@@ -97,18 +99,18 @@ export default function Restaurants() {
   }
 
   const handlePageChange = (newPage: number) => {
-    const validPage = Number(newPage);
+    const validPage: number = Number(newPage);
     if (!isNaN(validPage)) {
-      const newParams = new URLSearchParams(searchParams);
+      const newParams: URLSearchParams = new URLSearchParams(searchParams);
       newParams.set("page", validPage.toString());
       setSearchParams(newParams);
     }
   };
 
   const handleLimitChange = (newLimit: number) => {
-    const validLimit = Number(newLimit);
+    const validLimit: number = Number(newLimit);
     if (!isNaN(validLimit)) {
-      const newParams = new URLSearchParams(searchParams);
+      const newParams: URLSearchParams = new URLSearchParams(searchParams);
       newParams.set("size", validLimit.toString());
       setSearchParams(newParams);
     }
@@ -116,7 +118,7 @@ export default function Restaurants() {
 
   const handlePageOrder = (order: string) => {
     if (order) {
-      const newParams = new URLSearchParams(searchParams);
+      const newParams: URLSearchParams = new URLSearchParams(searchParams);
       newParams.set("sortby", order);
       setSearchParams(newParams);
     }
@@ -128,7 +130,6 @@ export default function Restaurants() {
   };
 
   const handleCreateOrEditClick = (type: string) => {
-    console.log(type);
     if (type === "create") {
       navigate(`/restaurantsFormCreate`);
     } else if (type === "update") {
@@ -139,13 +140,13 @@ export default function Restaurants() {
   };
 
   useEffect(() => {
-    const page = searchParams.get("page");
-    const limit = searchParams.get("size");
-    const order = searchParams.get("sortby");
-    const newParams = new URLSearchParams(searchParams);
+    const page: string | null = searchParams.get("page");
+    const limit: string | null = searchParams.get("size");
+    const order: string | null = searchParams.get("sortby");
+    const newParams: URLSearchParams = new URLSearchParams(searchParams);
     const updatedParams: { [key: string]: string } = {};
 
-    newParams.forEach((value, key) => {
+    newParams.forEach((value: string, key: string) => {
       updatedParams[key] = value;
     });
 
@@ -161,8 +162,8 @@ export default function Restaurants() {
       setCurrentOrder(order);
     }
 
-    const parameters = ["borough", "grade", "cuisineDescription"];
-    parameters.forEach((param) => {
+    const parameters: string[] = ["borough", "grade", "cuisineDescription"];
+    parameters.forEach((param: string) => {
       if (newParams.has(param)) {
         updatedParams[param] = inputText;
       }
@@ -198,6 +199,7 @@ export default function Restaurants() {
             <IconButton
               icon={faPlus}
               onClick={() => handleCreateOrEditClick("create")}
+              disabled={false}
               className="border-b bg-[#3D4C7D] text-[1.5vw]"
             />
             <IconButton

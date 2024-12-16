@@ -26,7 +26,7 @@ const InputField = ({
         value={value}
         onChange={onChange}
         required={required}
-        maxLength={20}
+        maxLength={30}
         disabled={disabled}
       />
     </div>

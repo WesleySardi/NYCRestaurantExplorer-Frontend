@@ -7,7 +7,6 @@ import InputField from "~/personalcomponents/InputField";
 import InspectionActions from "~/personalcomponents/InspectionActions";
 import InspectionsList from "~/personalcomponents/InspectionList";
 import AddInspectionDialog from "~/personalcomponents/AddInspectionsDialog";
-import { IRestaurantTableProps } from "~/interfaces/RestaurantTableProps";
 import { IInspection, IRestaurant } from "~/interfaces/FormDataInterface";
 
 const fields = [
@@ -49,17 +48,17 @@ const fields = [
   },
 ];
 
-export async function loader({ params }) {
+export async function loader({ params }: { [key: string]: string }) {
   const { id } = params;
-  const apiUrl = `http://localhost:8080/api/restaurants/${id}`;
-  const response = await fetch(apiUrl);
+  const apiUrl: string = `http://localhost:8080/api/restaurants/${id}`;
+  const response: Response = await fetch(apiUrl);
   if (!response.ok) {
     throw new Response("Failed to fetch restaurant details", {
       status: response.status,
     });
   }
 
-  const data = await response.json();
+  const data: Object = await response.json();
 
   return { restaurant: data };
 }
@@ -367,7 +366,7 @@ export default function RestaurantsFormUpdate() {
               <div className="flex w-full overflow-y-auto w-1/2 h-[65vh] px-[1vw]">
                 <div
                   className={`pl-5 pt-5 ${
-                    formData.inspections.length > 0 ? "w-1/2" : "w-2/3"
+                    formData.inspections.length > 0 ? "w-1/2" : "w-2/3 m-auto"
                   } pr-6`}
                 >
                   {fields.map((field) => (
