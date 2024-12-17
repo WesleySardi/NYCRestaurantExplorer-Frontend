@@ -1,4 +1,4 @@
-# NYC Restaurant Explorer
+# NYC Restaurant Explorer - Front-end
 
 ## Project Overview
 This project is a frontend application built with **Remix.run** and **Shadcn/UI** for the Nycrestaurant application. The application connects to a backend API for restaurant management, providing users with features such as listing restaurants, creating new ones, editing existing entries, and viewing detailed restaurant data along with inspection history.
