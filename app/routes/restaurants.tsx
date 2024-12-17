@@ -8,6 +8,7 @@ import RestaurantTablePagination from "~/personalcomponents/RestaurantTablePagin
 import IconButton from "~/personalcomponents/IconButton";
 import SearchBar from "~/personalcomponents/SearchBar";
 import { toast } from "~/hooks/use-toast";
+import URLs from "../utils/urls";
 
 export async function loader({ request }: { [key: string]: string }) {
   const url: URL = new URL(request.url);
@@ -24,11 +25,15 @@ export async function loader({ request }: { [key: string]: string }) {
   let apiUrl: string;
 
   if (name != null) {
-    apiUrl = `http://localhost:8080/api/restaurants/search?page=${page}&size=${size}&sortby=${sortBy}&sortDirection=${sortDirection}${
+    apiUrl = `${
+      URLs.BASIC
+    }/api/restaurants/search?page=${page}&size=${size}&sortby=${sortBy}&sortDirection=${sortDirection}${
       name ? `&name=${name}` : ""
     }`;
   } else {
-    apiUrl = `http://localhost:8080/api/restaurants?page=${page}&size=${size}&sortby=${sortBy}&sortDirection=${sortDirection}${`${
+    apiUrl = `${
+      URLs.BASIC
+    }/api/restaurants?page=${page}&size=${size}&sortby=${sortBy}&sortDirection=${sortDirection}${`${
       grade ? `&grade=${grade}` : ""
     }${borough ? `&borough=${borough}` : ""}${
       cuisineDescription ? `&cuisineDescription=${cuisineDescription}` : ""

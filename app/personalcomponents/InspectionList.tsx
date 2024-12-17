@@ -3,6 +3,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Combobox } from "~/components/ui/combobox";
 import { DatePicker } from "~/components/ui/datepicker";
 import { Button } from "~/components/ui/button";
+import { IInspection } from "~/interfaces/FormDataInterface";
 
 const InspectionsList = ({
   inspections,
@@ -24,7 +25,7 @@ const InspectionsList = ({
           ref={index === inspections.length - 1 ? newItemRef : null}
         >
           <div className="flex justify-between text-white mb-2 border-b pb-3 font-bold">
-            <h1>Inspections {index + 1}</h1>
+            <h1>Inspection {index + 1}</h1>
             {isEditable ? (
               <Button
                 className={`cursor-pointer px-5 ${

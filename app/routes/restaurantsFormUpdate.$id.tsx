@@ -8,6 +8,7 @@ import InspectionActions from "~/personalcomponents/InspectionActions";
 import InspectionsList from "~/personalcomponents/InspectionList";
 import AddInspectionDialog from "~/personalcomponents/AddInspectionsDialog";
 import { IInspection, IRestaurant } from "~/interfaces/FormDataInterface";
+import URLs from "~/utils/urls";
 
 const fields = [
   {
@@ -50,7 +51,7 @@ const fields = [
 
 export async function loader({ params }: { [key: string]: string }) {
   const { id } = params;
-  const apiUrl: string = `http://localhost:8080/api/restaurants/${id}`;
+  const apiUrl: string = `${URLs.BASIC}/api/restaurants/${id}`;
   const response: Response = await fetch(apiUrl);
   if (!response.ok) {
     throw new Response("Failed to fetch restaurant details", {
@@ -196,7 +197,7 @@ export default function RestaurantsFormUpdate() {
 
     try {
       const response: Response = await fetch(
-        `http://localhost:8080/api/restaurants/${restaurant.camis}`,
+        `${URLs.BASIC}/api/restaurants/${restaurant.camis}`,
         {
           method: "PUT",
           headers: {
@@ -234,7 +235,7 @@ export default function RestaurantsFormUpdate() {
         if (inspection) {
           if (inspection.id !== null) {
             const response: Response = await fetch(
-              `http://localhost:8080/api/inspections/${inspection.id}`,
+              `${URLs.BASIC}/api/inspections/${inspection.id}`,
               {
                 method: "DELETE",
                 headers: {
@@ -262,8 +263,6 @@ export default function RestaurantsFormUpdate() {
                 ...formData,
                 inspections: newInspections,
               });
-
-              navigate(`/restaurantsFormUpdate/${restaurant.camis}`);
             } else {
               const errorText: string = await response.text();
               toast.error(
@@ -303,7 +302,7 @@ export default function RestaurantsFormUpdate() {
     try {
       if (restaurant) {
         const response: Response = await fetch(
-          `http://localhost:8080/api/restaurants/${restaurant.camis}`,
+          `${URLs.BASIC}/api/restaurants/${restaurant.camis}`,
           {
             method: "DELETE",
             headers: {

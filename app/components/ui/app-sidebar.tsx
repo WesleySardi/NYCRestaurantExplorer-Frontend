@@ -1,5 +1,4 @@
 import { Home, Utensils, Plus } from "lucide-react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -12,7 +11,7 @@ import {
   useSidebar,
 } from "../ui/sidebar";
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "@remix-run/react";
+import { useLocation } from "@remix-run/react";
 
 const items = [
   {
@@ -33,17 +32,8 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const {
-    state,
-    open,
-    setOpen,
-    openMobile,
-    setOpenMobile,
-    isMobile,
-    toggleSidebar,
-  } = useSidebar();
+  const { open, setOpen, openMobile, setOpenMobile } = useSidebar();
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (open) {

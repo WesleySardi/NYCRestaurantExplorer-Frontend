@@ -4,6 +4,7 @@ import InputField from "~/personalcomponents/InputField";
 import InspectionsList from "~/personalcomponents/InspectionList";
 import RestaurantInfoActions from "~/personalcomponents/RestaurantInfoActions";
 import { IInspection, IRestaurant } from "../interfaces/FormDataInterface";
+import URLs from "~/utils/urls";
 
 const fields = [
   {
@@ -46,7 +47,7 @@ const fields = [
 
 export async function loader({ params }: { [key: string]: string }) {
   const { id } = params;
-  const apiUrl: string = `http://localhost:8080/api/restaurants/${id}`;
+  const apiUrl: string = `${URLs.BASIC}/api/restaurants/${id}`;
   const response: Response = await fetch(apiUrl);
   if (!response.ok) {
     throw new Response("Failed to fetch restaurant details", {

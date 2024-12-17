@@ -1,28 +1,23 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faChartSimple,
-  faPlus,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChartSimple } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "~/components/ui/button";
 import AddInspectionDialog from "./AddInspectionsDialog";
 import { useState } from "react";
+import { IRestaurant } from "~/interfaces/FormDataInterface";
 
 const RestaurantInfoActions = ({
   selectedIds,
   formData = null,
   setFormData,
   setIsNewItemAdded,
-  handleDeleteInspection,
-  handleDeleteRestaurant,
-}) => {
+}: IRestaurantInfoActionsProps) => {
   const [grade, setGrade] = useState<null | string>("N");
   const [criticalFlag, setCriticalFlag] = useState<null | string>(
     "Undefined Critical Flag"
   );
 
   const handleAddInspection = () => {
-    setFormData((prevData) => ({
+    setFormData((prevData: IRestaurant) => ({
       ...prevData,
       inspections: [
         ...prevData.inspections,

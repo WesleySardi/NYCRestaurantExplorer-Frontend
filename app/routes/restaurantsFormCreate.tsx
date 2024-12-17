@@ -4,6 +4,7 @@ import { Button } from "~/components/ui/button";
 import { toast } from "~/hooks/use-toast";
 import AddInspectionDialog from "~/personalcomponents/AddInspectionsDialog";
 import RestaurantForm from "~/personalcomponents/RestaurantFormCreate";
+import URLs from "~/utils/urls";
 
 export default function RestaurantFormCreate() {
   const navigate = useNavigate();
@@ -38,20 +39,17 @@ export default function RestaurantFormCreate() {
     }
 
     try {
-      const response: Response = await fetch(
-        "http://localhost:8080/api/restaurants",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "*/*",
-          },
-          body: JSON.stringify({
-            ...formData,
-            lastInspectionDate: formData.lastInspectionDate,
-          }),
-        }
-      );
+      const response: Response = await fetch(`${URLs.BASIC}/api/restaurants`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "*/*",
+        },
+        body: JSON.stringify({
+          ...formData,
+          lastInspectionDate: formData.lastInspectionDate,
+        }),
+      });
 
       if (response.ok) {
         toast.success("Restaurant added successfully!");
@@ -86,7 +84,7 @@ export default function RestaurantFormCreate() {
                 type="submit"
                 className="w-full text-white rounded bg-green-800 hover:bg-gray-700 h-[6vh]"
               >
-                Submit
+                Create
               </Button>
             }
             title={"Are you absolutely sure?"}
