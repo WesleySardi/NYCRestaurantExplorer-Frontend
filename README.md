@@ -1,4 +1,4 @@
-# Nycrestaurant Remix - Frontend Documentation
+# NYC Restaurant Explorer
 
 ## Project Overview
 This project is a frontend application built with **Remix.run** and **Shadcn/UI** for the Nycrestaurant application. The application connects to a backend API for restaurant management, providing users with features such as listing restaurants, creating new ones, editing existing entries, and viewing detailed restaurant data along with inspection history.
@@ -28,11 +28,10 @@ yarn install
 ```
 
 ### 3. Environment Setup
-Ensure you have a `urls` file in the root directory with the necessary configuration for your backend API and other environment settings.
+Ensure you have a `urls` file in the project with the necessary configuration for your backend API and other environment settings.
 
 ```env
-DATABASE_URL=your-database-url
-API_BASE_URL=your-api-base-url
+BASE_URL=your-database-url
 ```
 
 ### 4. Running the Development Server
@@ -71,7 +70,7 @@ yarn start
 
 ## API Documentation
 
-### Required API Operations
+### Required Back-end API Operations
 
 ### 1. **Get Restaurants by Filters**
    - **URL:** `/api/restaurants`
@@ -190,24 +189,34 @@ yarn start
 
 ### Key Features
 
-1. **Root Component**: Fixes the Sidebar and Background, applying a standardized layout across the application.
+1. **Root Component**: Fixes the Sidebar and Background by applying a standardized layout and offering navigation options to facilitate user access throughout the application.
 2. **Home Page**: Contains a central "Explore Restaurants" button, which leads to the list of restaurants.
 ![image](https://github.com/user-attachments/assets/79957449-116a-4735-8cdd-5a4195ec9718)
 
-4. **Restaurant List**: Displays a table of restaurants with pagination and search functionality. It also includes buttons for editing, viewing, and creating new restaurants.
+3. **Restaurant List**: Displays a table of restaurants with pagination, search functionality, and flexible filtering options. Users can:
+      - *Pagination*: Navigate through different pages and adjust the number of items displayed per page.
+      - *Sorting*: Change the order of the table's content based on specific columns.
+      - *Search Input*: Integrates with a combo box offering three search options:
+            - If no option is selected, the default behavior is search by name.
+            - Users can choose one, two, or all three options simultaneously to filter results based on selected criteria.
+      - *Action Buttons*: Includes options for editing, viewing, and creating new restaurants.
 ![image](https://github.com/user-attachments/assets/142d3e03-b985-4a33-a928-61f6fbeb4b86)
 
-6. **Create New Restaurant**: A form that allows users to create a new restaurant entry.
+4. **Create New Restaurant**: A form that allows users to create a new restaurant entry.
 ![image](https://github.com/user-attachments/assets/db6b5acf-dad1-4cc5-8533-668ec314cad4)
 
-8. **View Restaurant**: Displays detailed information for a selected restaurant, including its inspection history, ratings, and charts showing inspection grades and critical flags.
+5. **View Restaurant**: Displays detailed information for a selected restaurant, including its inspection history, ratings, and charts showing inspection grades and critical flags.
 ![image](https://github.com/user-attachments/assets/91a9ce10-21fc-4916-9f63-e117c786d4a8)
 ![image](https://github.com/user-attachments/assets/4742b72d-0c12-4e9b-af5b-6e653d19f163)
 
-10. **Edit Restaurant**: A form where users can edit restaurant details and delete the entry, with some fields being locked for editing.
+6. **Edit Restaurant**: A form where users can edit restaurant details and delete the entry, with some fields being locked for editing. The interface provides access to three buttons:
+      - *Add New Inspection*: Allows users to add a new inspection for the restaurant.
+      - *Delete Inspections*: Deletes multiple inspections when selected, enabling bulk deletion. Each inspection card includes an "X" icon for selection. If inspections are selected and the Delete Inspections button is clicked, all selected inspections will be removed.
+      - *Delete Restaurant*: Deletes the restaurant entry along with all its associated inspections.
+  
 ![image](https://github.com/user-attachments/assets/83ac54f5-6ad8-4e3c-9967-08705ce7eced)
 
-12. **Confirmation Modals**: Used for all creation, update, and deletion operations to confirm the user's action.
+7. **Confirmation Modals**: Used for all creation, update, and deletion operations to confirm the user's action.
 ![image](https://github.com/user-attachments/assets/585ba3dd-025d-4c33-a3ef-883dbacac0ca)
 
 ### Shadcn/UI Components Usage
@@ -217,11 +226,14 @@ yarn start
 - **Modals**: Confirmation modals for confirming user actions such as deletion and creation of restaurant entries.
 - **Navigation**: Sidebar navigation is fixed for the entire application.
 
-### Components
+### Main Application Components
 - **Table**: Displays restaurant data such as name, address, cuisine, and phone number.
+- **Input**: Allows users to enter data for searches, filters, or form submissions.
+- **Bar Chart**: Visualizes restaurant-related data in a bar graph format.
 - **Buttons**: Includes buttons for viewing, editing, and creating new restaurants.
-- **Forms**: Used in the Create and Edit Restaurant screens.
-- **Modals**: Confirmation modals for each action.
+- **Forms**: Used in the Create, Edit and View Restaurant/Inspections screens.
+- **Modals**: Provides confirmation or information dialogs for each action.
+- **Sidebar**: Offers navigation options throughout the application.
 
 ## File Structure
 
