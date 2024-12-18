@@ -51,7 +51,7 @@ const fields = [
 
 export async function loader({ params }: { [key: string]: string }) {
   const { id } = params;
-  const apiUrl: string = `/api/restaurants/${id}`;
+  const apiUrl: string = `${URLs.BASIC}/api/restaurants/${id}`;
   const response: Response = await fetch(apiUrl);
   if (!response.ok) {
     throw new Response("Failed to fetch restaurant details", {
@@ -197,7 +197,7 @@ export default function RestaurantsFormUpdate() {
 
     try {
       const response: Response = await fetch(
-        `/api/restaurants/${restaurant.camis}`,
+        `${URLs.BASIC}/api/restaurants/${restaurant.camis}`,
         {
           method: "PUT",
           headers: {
@@ -235,7 +235,7 @@ export default function RestaurantsFormUpdate() {
         if (inspection) {
           if (inspection.id !== null) {
             const response: Response = await fetch(
-              `/api/inspections/${inspection.id}`,
+              `${URLs.BASIC}/api/inspections/${inspection.id}`,
               {
                 method: "DELETE",
                 headers: {
@@ -302,7 +302,7 @@ export default function RestaurantsFormUpdate() {
     try {
       if (restaurant) {
         const response: Response = await fetch(
-          `/api/restaurants/${restaurant.camis}`,
+          `${URLs.BASIC}/api/restaurants/${restaurant.camis}`,
           {
             method: "DELETE",
             headers: {

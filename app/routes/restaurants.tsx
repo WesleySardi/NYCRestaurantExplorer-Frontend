@@ -25,11 +25,15 @@ export async function loader({ request }: { [key: string]: string }) {
   let apiUrl: string;
 
   if (name != null) {
-    apiUrl = `/api/restaurants/search?page=${page}&size=${size}&sortby=${sortBy}&sortDirection=${sortDirection}${
+    apiUrl = `${
+      URLs.BASIC
+    }/api/restaurants/search?page=${page}&size=${size}&sortby=${sortBy}&sortDirection=${sortDirection}${
       name ? `&name=${name}` : ""
     }`;
   } else {
-    apiUrl = `/api/restaurants?page=${page}&size=${size}&sortby=${sortBy}&sortDirection=${sortDirection}${`${
+    apiUrl = `${
+      URLs.BASIC
+    }/api/restaurants?page=${page}&size=${size}&sortby=${sortBy}&sortDirection=${sortDirection}${`${
       grade ? `&grade=${grade}` : ""
     }${borough ? `&borough=${borough}` : ""}${
       cuisineDescription ? `&cuisineDescription=${cuisineDescription}` : ""

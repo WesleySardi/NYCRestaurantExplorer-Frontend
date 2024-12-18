@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "http://nycrestaurantexplorerapp.us-east-1.elasticbeanstalk.com/api/:path*"
-    }
-  ]
-}
