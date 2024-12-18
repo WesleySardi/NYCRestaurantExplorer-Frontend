@@ -47,7 +47,7 @@ const fields = [
 
 export async function loader({ params }: { [key: string]: string }) {
   const { id } = params;
-  const apiUrl: string = `${URLs.BASIC}/api/restaurants/${id}`;
+  const apiUrl: string = `/api/restaurants/${id}`;
   const response: Response = await fetch(apiUrl);
   if (!response.ok) {
     throw new Response("Failed to fetch restaurant details", {

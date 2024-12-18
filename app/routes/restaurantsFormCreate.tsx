@@ -39,7 +39,7 @@ export default function RestaurantFormCreate() {
     }
 
     try {
-      const response: Response = await fetch(`${URLs.BASIC}/api/restaurants`, {
+      const response: Response = await fetch(`/api/restaurants`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
